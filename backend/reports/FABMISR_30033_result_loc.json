@@ -1,0 +1,67 @@
+{
+  "file": "ocr_json\\FABMISR\\30033_result.json",
+  "bank": "FABMISR",
+  "results": {
+    "bank_name": {
+      "bbox": [
+        1,
+        47,
+        336,
+        101
+      ],
+      "confidence": 0.9997667074203491,
+      "method": "region_regex",
+      "ocr_engine": "latin",
+      "text": "FABMISR"
+    },
+    "date": {
+      "bbox": [
+        1202,
+        35,
+        1537,
+        89
+      ],
+      "confidence": 0.9879336953163147,
+      "method": "region_regex",
+      "ocr_engine": "latin",
+      "text": "31/May/2026"
+    },
+    "cheque_number": {
+      "bbox": [
+        570,
+        20,
+        905,
+        74
+      ],
+      "confidence": 0.9995080828666687,
+      "method": "region_regex",
+      "ocr_engine": "latin",
+      "text": "No:11637511"
+    },
+    "amount_numeric": {
+      "bbox": [
+        1341,
+        257,
+        1676,
+        311
+      ],
+      "confidence": 0.9998663663864136,
+      "method": "region_regex",
+      "ocr_engine": "latin",
+      "text": "31,149.00"
+    },
+    "name": {
+      "bbox": [
+        633,
+        143,
+        1387,
+        210
+      ],
+      "confidence": 0.9552741646766663,
+      "method": "anchor_payee_scored",
+      "ocr_engine": "arabic",
+      "text": "ﺵﺮﻛﺓ ﺏﻼﻣ ﻪﻴﻟﺯ ﻞﻠﺘﻌﻤﻳﺭ",
+      "anchor": "pay_to"
+    }
+  }
+}

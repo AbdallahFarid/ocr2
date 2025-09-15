@@ -1,0 +1,23 @@
+{
+  "raw_ocr_results": [],
+  "extraction_method": "paddleocr",
+  "image_metadata": {
+    "width": 1677,
+    "height": 677,
+    "channels": 3,
+    "dtype": "uint8",
+    "aspect_ratio": 2.4771048744460855,
+    "brightness_mean_gray": 172.4306099817762,
+    "contrast_std_gray": 118.49084695252452
+  },
+  "ocr_metadata": {
+    "engine": "PaddleOCR",
+    "languages": [
+      "ar",
+      "en"
+    ],
+    "detections_total": 0
+  },
+  "filename": "30008.jpg",
+  "engine_raw_preview": "[{'input_path': 'sample_images\\\\QNB\\\\30008.jpg', 'page_index': None, 'doc_preprocessor_res': {'input_path': None, 'page_index': None, 'input_img': array([[[0, ..., 0],\n        ...,\n        [0, ..., 0]],\n\n       ...,\n\n       [[0, ..., 0],\n        ...,\n        [1, ..., 1]]], shape=(677, 1677, 3), dtype=uint8), 'model_settings': {'use_doc_orientation_classify': True, 'use_doc_unwarping': True}, 'angle': 0, 'rot_img': array([[[0, ..., 0],\n        ...,\n        [0, ..., 0]],\n\n       ...,\n\n       [[0, ..., 0],\n        ...,\n        [1, ..., 1]]], shape=(677, 1677, 3), dtype=uint8), 'output_img': array([[[  0, ...,   0],\n        ...,\n        [255, ..., 255]],\n\n       ...,\n\n       [[255, ..., 255],\n        ...,\n        [254, ..., 254]]], shape=(677, 1677, 3), dtype=uint8)}, 'dt_polys': [array([[1394,   53],\n       ...,\n       [1394,   78]], shape=(4, 2), dtype=int16), array([[196,  98],\n       ...,\n       [196, 133]], shape=(4, 2), dtype=int16), array([[714, 110],\n       ...,\n       [715, 137]],"
+}

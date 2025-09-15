@@ -1,0 +1,67 @@
+{
+  "file": "ocr_json\\FABMISR\\30027_result.json",
+  "bank": "FABMISR",
+  "results": {
+    "bank_name": {
+      "bbox": [
+        4,
+        49,
+        339,
+        103
+      ],
+      "confidence": 0.9997990727424622,
+      "method": "region_regex",
+      "ocr_engine": "latin",
+      "text": "FABMISR"
+    },
+    "date": {
+      "bbox": [
+        1209,
+        35,
+        1544,
+        89
+      ],
+      "confidence": 0.9986348748207092,
+      "method": "region_regex",
+      "ocr_engine": "latin",
+      "text": "30/Nov/2025"
+    },
+    "cheque_number": {
+      "bbox": [
+        573,
+        19,
+        908,
+        73
+      ],
+      "confidence": 0.9489580392837524,
+      "method": "region_regex",
+      "ocr_engine": "latin",
+      "text": "No : 11637505"
+    },
+    "amount_numeric": {
+      "bbox": [
+        1345,
+        256,
+        1677,
+        310
+      ],
+      "confidence": 0.999822735786438,
+      "method": "region_regex",
+      "ocr_engine": "latin",
+      "text": "24,920.00"
+    },
+    "name": {
+      "bbox": [
+        636,
+        144,
+        1390,
+        211
+      ],
+      "confidence": 0.9789618253707886,
+      "method": "anchor_payee_scored",
+      "ocr_engine": "arabic",
+      "text": "ﺵﺮﻛﺔﺑﻼﻤﻬﻴﻟﺰﻠﻠﺘﻌﻤﻳﺭ",
+      "anchor": "pay_to"
+    }
+  }
+}

@@ -1,0 +1,10 @@
+pyproject.toml
+app/__init__.py
+app/config.py
+app/ocr/__init__.py
+app/ocr/preflight.py
+ocr2_backend.egg-info/PKG-INFO
+ocr2_backend.egg-info/SOURCES.txt
+ocr2_backend.egg-info/dependency_links.txt
+ocr2_backend.egg-info/requires.txt
+ocr2_backend.egg-info/top_level.txt

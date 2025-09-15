@@ -1,0 +1,12 @@
+Metadata-Version: 2.4
+Name: ocr2-backend
+Version: 0.1.0
+Summary: Cheque processing backend
+Author: Team
+Requires-Python: >=3.10
+Requires-Dist: opencv-python>=4.8
+Requires-Dist: numpy>=1.24
+Provides-Extra: dev
+Requires-Dist: pytest>=7.4; extra == "dev"
+Provides-Extra: ocr
+Requires-Dist: paddleocr>=2.7.0; extra == "ocr"

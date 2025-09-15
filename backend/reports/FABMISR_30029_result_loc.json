@@ -1,0 +1,61 @@
+{
+  "file": "ocr_json\\FABMISR\\30029_result.json",
+  "bank": "FABMISR",
+  "results": {
+    "bank_name": {
+      "bbox": [
+        0,
+        35,
+        369,
+        102
+      ],
+      "confidence": 0.9,
+      "method": "template_roi",
+      "ocr_engine": "latin"
+    },
+    "date": {
+      "bbox": [
+        1176,
+        22,
+        1545,
+        89
+      ],
+      "confidence": 0.9,
+      "method": "template_roi",
+      "ocr_engine": "latin"
+    },
+    "cheque_number": {
+      "bbox": [
+        537,
+        7,
+        906,
+        74
+      ],
+      "confidence": 0.9,
+      "method": "template_roi",
+      "ocr_engine": "latin"
+    },
+    "amount_numeric": {
+      "bbox": [
+        1306,
+        244,
+        1675,
+        311
+      ],
+      "confidence": 0.9,
+      "method": "template_roi",
+      "ocr_engine": "latin"
+    },
+    "name": {
+      "bbox": [
+        599,
+        131,
+        1387,
+        211
+      ],
+      "confidence": 0.9,
+      "method": "template_roi",
+      "ocr_engine": "arabic"
+    }
+  }
+}

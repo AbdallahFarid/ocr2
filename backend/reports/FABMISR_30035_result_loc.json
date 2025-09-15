@@ -1,0 +1,66 @@
+{
+  "file": "ocr_json\\FABMISR\\30035_result.json",
+  "bank": "FABMISR",
+  "results": {
+    "bank_name": {
+      "bbox": [
+        0,
+        48,
+        335,
+        102
+      ],
+      "confidence": 0.9997845888137817,
+      "method": "region_regex",
+      "ocr_engine": "latin",
+      "text": "FABMISR"
+    },
+    "date": {
+      "bbox": [
+        1176,
+        22,
+        1545,
+        89
+      ],
+      "confidence": 0.9,
+      "method": "template_roi",
+      "ocr_engine": "latin"
+    },
+    "cheque_number": {
+      "bbox": [
+        570,
+        20,
+        905,
+        74
+      ],
+      "confidence": 0.9825310111045837,
+      "method": "region_regex",
+      "ocr_engine": "latin",
+      "text": "No: 11637513"
+    },
+    "amount_numeric": {
+      "bbox": [
+        1341,
+        257,
+        1676,
+        311
+      ],
+      "confidence": 0.9999374747276306,
+      "method": "region_regex",
+      "ocr_engine": "latin",
+      "text": "31,149.00"
+    },
+    "name": {
+      "bbox": [
+        632,
+        143,
+        1386,
+        210
+      ],
+      "confidence": 0.9602606892585754,
+      "method": "anchor_payee_scored",
+      "ocr_engine": "arabic",
+      "text": "ﺵﺮﻛﺓ ﺏﻼﻣ ﻪﻴﻟﺰﻠﻠﺘﻌﻤﻳﺭ",
+      "anchor": "pay_to"
+    }
+  }
+}

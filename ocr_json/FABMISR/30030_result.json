@@ -1,0 +1,21 @@
+{
+  "raw_ocr_results": [],
+  "extraction_method": "paddleocr",
+  "image_metadata": {
+    "width": 1677,
+    "height": 677,
+    "channels": 3,
+    "dtype": "uint8",
+    "aspect_ratio": 2.4771048744460855,
+    "brightness_mean_gray": 191.87253738784088,
+    "contrast_std_gray": 109.44219276868273
+  },
+  "ocr_metadata": {
+    "engine": "PaddleOCR",
+    "languages": [
+      "ar"
+    ],
+    "detections_total": 0
+  },
+  "filename": "30030.jpg"
+}

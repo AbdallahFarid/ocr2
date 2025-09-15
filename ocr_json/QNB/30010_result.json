@@ -1,0 +1,1944 @@
+{
+  "payee_name": {
+    "text": "PﻡY TO",
+    "confidence": 0.8018153309822083
+  },
+  "amount_numerical": {
+    "text": "21116.00",
+    "confidence": 0.99
+  },
+  "amount_written": {
+    "text": "",
+    "confidence": 0.0
+  },
+  "date": {
+    "text": "…31/Jul/2026.",
+    "confidence": 0.9549213647842407
+  },
+  "cheque_number": {
+    "text": "10035466166",
+    "confidence": 0.9800862669944763
+  },
+  "raw_ocr_results": [
+    {
+      "text": "63638664",
+      "raw_text": "63638664",
+      "lang": "en",
+      "confidence": 0.9997662305831909,
+      "bbox": [
+        [
+          1349.0,
+          67.0
+        ],
+        [
+          1546.0,
+          64.0
+        ],
+        [
+          1546.0,
+          96.0
+        ],
+        [
+          1350.0,
+          98.0
+        ]
+      ],
+      "bbox_rect": [
+        1349.0,
+        64.0,
+        1546.0,
+        98.0
+      ],
+      "bbox_width": 197.0,
+      "bbox_height": 34.0,
+      "bbox_area": 6698.0,
+      "center_x": 1447.75,
+      "center_y": 81.25
+    },
+    {
+      "text": "QNB",
+      "raw_text": "QNB",
+      "lang": "en",
+      "confidence": 0.9997828006744385,
+      "bbox": [
+        [
+          201.0,
+          85.0
+        ],
+        [
+          341.0,
+          85.0
+        ],
+        [
+          341.0,
+          135.0
+        ],
+        [
+          201.0,
+          135.0
+        ]
+      ],
+      "bbox_rect": [
+        201.0,
+        85.0,
+        341.0,
+        135.0
+      ],
+      "bbox_width": 140.0,
+      "bbox_height": 50.0,
+      "bbox_area": 7000.0,
+      "center_x": 271.0,
+      "center_y": 110.0
+    },
+    {
+      "text": "Qatar National Bank ALAHLI",
+      "raw_text": "Qatar National Bank ALAHLI",
+      "lang": "en",
+      "confidence": 0.9967027306556702,
+      "bbox": [
+        [
+          717.0,
+          121.0
+        ],
+        [
+          970.0,
+          118.0
+        ],
+        [
+          971.0,
+          138.0
+        ],
+        [
+          718.0,
+          141.0
+        ]
+      ],
+      "bbox_rect": [
+        717.0,
+        118.0,
+        971.0,
+        141.0
+      ],
+      "bbox_width": 254.0,
+      "bbox_height": 23.0,
+      "bbox_area": 5842.0,
+      "center_x": 844.0,
+      "center_y": 129.5
+    },
+    {
+      "text": "DATE..",
+      "raw_text": "DATE..",
+      "lang": "en",
+      "confidence": 0.9151527881622314,
+      "bbox": [
+        [
+          1073.0,
+          122.0
+        ],
+        [
+          1169.0,
+          122.0
+        ],
+        [
+          1169.0,
+          154.0
+        ],
+        [
+          1073.0,
+          154.0
+        ]
+      ],
+      "bbox_rect": [
+        1073.0,
+        122.0,
+        1169.0,
+        154.0
+      ],
+      "bbox_width": 96.0,
+      "bbox_height": 32.0,
+      "bbox_area": 3072.0,
+      "center_x": 1121.0,
+      "center_y": 138.0
+    },
+    {
+      "text": "ALAHLI",
+      "raw_text": "ALAHLI",
+      "lang": "en",
+      "confidence": 0.9998494982719421,
+      "bbox": [
+        [
+          207.0,
+          133.0
+        ],
+        [
+          312.0,
+          133.0
+        ],
+        [
+          312.0,
+          154.0
+        ],
+        [
+          207.0,
+          154.0
+        ]
+      ],
+      "bbox_rect": [
+        207.0,
+        133.0,
+        312.0,
+        154.0
+      ],
+      "bbox_width": 105.0,
+      "bbox_height": 21.0,
+      "bbox_area": 2205.0,
+      "center_x": 259.5,
+      "center_y": 143.5
+    },
+    {
+      "text": "…31/Jul/2026.",
+      "raw_text": "…31/Jul/2026.",
+      "lang": "en",
+      "confidence": 0.9549213647842407,
+      "bbox": [
+        [
+          1236.0,
+          125.0
+        ],
+        [
+          1437.0,
+          123.0
+        ],
+        [
+          1437.0,
+          154.0
+        ],
+        [
+          1237.0,
+          156.0
+        ]
+      ],
+      "bbox_rect": [
+        1236.0,
+        123.0,
+        1437.0,
+        156.0
+      ],
+      "bbox_width": 201.0,
+      "bbox_height": 33.0,
+      "bbox_area": 6633.0,
+      "center_x": 1336.75,
+      "center_y": 139.5
+    },
+    {
+      "text": "AGAINST THIS CHEQUE",
+      "raw_text": "AGAINST THIS CHEQUE",
+      "lang": "en",
+      "confidence": 0.9730556607246399,
+      "bbox": [
+        [
+          49.0,
+          201.0
+        ],
+        [
+          364.0,
+          203.0
+        ],
+        [
+          364.0,
+          227.0
+        ],
+        [
+          49.0,
+          226.0
+        ]
+      ],
+      "bbox_rect": [
+        49.0,
+        201.0,
+        364.0,
+        227.0
+      ],
+      "bbox_width": 315.0,
+      "bbox_height": 26.0,
+      "bbox_area": 8190.0,
+      "center_x": 206.5,
+      "center_y": 214.25
+    },
+    {
+      "text": "PAY TO",
+      "raw_text": "PAY TO",
+      "lang": "en",
+      "confidence": 0.9986584782600403,
+      "bbox": [
+        [
+          47.0,
+          229.0
+        ],
+        [
+          152.0,
+          229.0
+        ],
+        [
+          152.0,
+          253.0
+        ],
+        [
+          47.0,
+          253.0
+        ]
+      ],
+      "bbox_rect": [
+        47.0,
+        229.0,
+        152.0,
+        253.0
+      ],
+      "bbox_width": 105.0,
+      "bbox_height": 24.0,
+      "bbox_area": 2520.0,
+      "center_x": 99.5,
+      "center_y": 241.0
+    },
+    {
+      "text": "1",
+      "raw_text": "1",
+      "lang": "en",
+      "confidence": 0.9656451940536499,
+      "bbox": [
+        [
+          1552.0,
+          230.0
+        ],
+        [
+          1676.0,
+          234.0
+        ],
+        [
+          1675.0,
+          261.0
+        ],
+        [
+          1551.0,
+          258.0
+        ]
+      ],
+      "bbox_rect": [
+        1551.0,
+        230.0,
+        1676.0,
+        261.0
+      ],
+      "bbox_width": 125.0,
+      "bbox_height": 31.0,
+      "bbox_area": 3875.0,
+      "center_x": 1613.5,
+      "center_y": 245.75
+    },
+    {
+      "text": "THE SUM OF",
+      "raw_text": "THE SUM OF",
+      "lang": "en",
+      "confidence": 0.9995840191841125,
+      "bbox": [
+        [
+          52.0,
+          316.0
+        ],
+        [
+          227.0,
+          316.0
+        ],
+        [
+          227.0,
+          341.0
+        ],
+        [
+          52.0,
+          341.0
+        ]
+      ],
+      "bbox_rect": [
+        52.0,
+        316.0,
+        227.0,
+        341.0
+      ],
+      "bbox_width": 175.0,
+      "bbox_height": 25.0,
+      "bbox_area": 4375.0,
+      "center_x": 139.5,
+      "center_y": 328.5
+    },
+    {
+      "text": "EGP",
+      "raw_text": "EGP",
+      "lang": "en",
+      "confidence": 0.9998416304588318,
+      "bbox": [
+        [
+          1241.0,
+          324.0
+        ],
+        [
+          1330.0,
+          321.0
+        ],
+        [
+          1331.0,
+          358.0
+        ],
+        [
+          1242.0,
+          361.0
+        ]
+      ],
+      "bbox_rect": [
+        1241.0,
+        321.0,
+        1331.0,
+        361.0
+      ],
+      "bbox_width": 90.0,
+      "bbox_height": 40.0,
+      "bbox_area": 3600.0,
+      "center_x": 1286.0,
+      "center_y": 341.0
+    },
+    {
+      "text": "   ",
+      "raw_text": "   ",
+      "lang": "en",
+      "confidence": 0.5255263447761536,
+      "bbox": [
+        [
+          294.0,
+          340.0
+        ],
+        [
+          1024.0,
+          334.0
+        ],
+        [
+          1024.0,
+          369.0
+        ],
+        [
+          294.0,
+          374.0
+        ]
+      ],
+      "bbox_rect": [
+        294.0,
+        334.0,
+        1024.0,
+        374.0
+      ],
+      "bbox_width": 730.0,
+      "bbox_height": 40.0,
+      "bbox_area": 29200.0,
+      "center_x": 659.0,
+      "center_y": 354.25
+    },
+    {
+      "text": "21,116.00",
+      "raw_text": "21,116.00",
+      "lang": "en",
+      "confidence": 0.9999532699584961,
+      "bbox": [
+        [
+          1454.0,
+          337.0
+        ],
+        [
+          1603.0,
+          337.0
+        ],
+        [
+          1603.0,
+          369.0
+        ],
+        [
+          1454.0,
+          369.0
+        ]
+      ],
+      "bbox_rect": [
+        1454.0,
+        337.0,
+        1603.0,
+        369.0
+      ],
+      "bbox_width": 149.0,
+      "bbox_height": 32.0,
+      "bbox_area": 4768.0,
+      "center_x": 1528.5,
+      "center_y": 353.0
+    },
+    {
+      "text": "Security leaturee",
+      "raw_text": "Security leaturee",
+      "lang": "en",
+      "confidence": 0.9450129270553589,
+      "bbox": [
+        [
+          1283.0,
+          396.0
+        ],
+        [
+          1380.0,
+          396.0
+        ],
+        [
+          1380.0,
+          410.0
+        ],
+        [
+          1283.0,
+          410.0
+        ]
+      ],
+      "bbox_rect": [
+        1283.0,
+        396.0,
+        1380.0,
+        410.0
+      ],
+      "bbox_width": 97.0,
+      "bbox_height": 14.0,
+      "bbox_area": 1358.0,
+      "center_x": 1331.5,
+      "center_y": 403.0
+    },
+    {
+      "text": "ncluded.",
+      "raw_text": "ncluded.",
+      "lang": "en",
+      "confidence": 0.9507722854614258,
+      "bbox": [
+        [
+          1282.0,
+          408.0
+        ],
+        [
+          1335.0,
+          408.0
+        ],
+        [
+          1335.0,
+          422.0
+        ],
+        [
+          1282.0,
+          422.0
+        ]
+      ],
+      "bbox_rect": [
+        1282.0,
+        408.0,
+        1335.0,
+        422.0
+      ],
+      "bbox_width": 53.0,
+      "bbox_height": 14.0,
+      "bbox_area": 742.0,
+      "center_x": 1308.5,
+      "center_y": 415.0
+    },
+    {
+      "text": "Delails on the back",
+      "raw_text": "Delails on the back",
+      "lang": "en",
+      "confidence": 0.9019563794136047,
+      "bbox": [
+        [
+          1281.0,
+          421.0
+        ],
+        [
+          1393.0,
+          421.0
+        ],
+        [
+          1393.0,
+          435.0
+        ],
+        [
+          1281.0,
+          435.0
+        ]
+      ],
+      "bbox_rect": [
+        1281.0,
+        421.0,
+        1393.0,
+        435.0
+      ],
+      "bbox_width": 112.0,
+      "bbox_height": 14.0,
+      "bbox_area": 1568.0,
+      "center_x": 1337.0,
+      "center_y": 428.0
+    },
+    {
+      "text": "63410429",
+      "raw_text": "63410429",
+      "lang": "en",
+      "confidence": 0.6161664128303528,
+      "bbox": [
+        [
+          1539.0,
+          417.0
+        ],
+        [
+          1597.0,
+          417.0
+        ],
+        [
+          1597.0,
+          428.0
+        ],
+        [
+          1539.0,
+          428.0
+        ]
+      ],
+      "bbox_rect": [
+        1539.0,
+        417.0,
+        1597.0,
+        428.0
+      ],
+      "bbox_width": 58.0,
+      "bbox_height": 11.0,
+      "bbox_area": 638.0,
+      "center_x": 1568.0,
+      "center_y": 422.5
+    },
+    {
+      "text": "63420479",
+      "raw_text": "63420479",
+      "lang": "en",
+      "confidence": 0.7110137939453125,
+      "bbox": [
+        [
+          1538.0,
+          429.0
+        ],
+        [
+          1598.0,
+          429.0
+        ],
+        [
+          1598.0,
+          443.0
+        ],
+        [
+          1538.0,
+          443.0
+        ]
+      ],
+      "bbox_rect": [
+        1538.0,
+        429.0,
+        1598.0,
+        443.0
+      ],
+      "bbox_width": 60.0,
+      "bbox_height": 14.0,
+      "bbox_area": 840.0,
+      "center_x": 1568.0,
+      "center_y": 436.0
+    },
+    {
+      "text": "ASHRAF SAAD ABDELMEGUID EL NOZAHI",
+      "raw_text": "ASHRAF SAAD ABDELMEGUID EL NOZAHI",
+      "lang": "en",
+      "confidence": 0.9981133341789246,
+      "bbox": [
+        [
+          90.0,
+          443.0
+        ],
+        [
+          630.0,
+          446.0
+        ],
+        [
+          630.0,
+          471.0
+        ],
+        [
+          90.0,
+          467.0
+        ]
+      ],
+      "bbox_rect": [
+        90.0,
+        443.0,
+        630.0,
+        471.0
+      ],
+      "bbox_width": 540.0,
+      "bbox_height": 28.0,
+      "bbox_area": 15120.0,
+      "center_x": 360.0,
+      "center_y": 456.75
+    },
+    {
+      "text": "00037 00017 10035466166-17 EGP",
+      "raw_text": "00037 00017 10035466166-17 EGP",
+      "lang": "en",
+      "confidence": 0.9800862669944763,
+      "bbox": [
+        [
+          92.0,
+          466.0
+        ],
+        [
+          551.0,
+          467.0
+        ],
+        [
+          551.0,
+          491.0
+        ],
+        [
+          92.0,
+          490.0
+        ]
+      ],
+      "bbox_rect": [
+        92.0,
+        466.0,
+        551.0,
+        491.0
+      ],
+      "bbox_width": 459.0,
+      "bbox_height": 25.0,
+      "bbox_area": 11475.0,
+      "center_x": 321.5,
+      "center_y": 478.5
+    },
+    {
+      "text": "Moustafa Kamel Branch",
+      "raw_text": "Moustafa Kamel Branch",
+      "lang": "en",
+      "confidence": 0.9989655017852783,
+      "bbox": [
+        [
+          94.0,
+          492.0
+        ],
+        [
+          441.0,
+          492.0
+        ],
+        [
+          441.0,
+          515.0
+        ],
+        [
+          94.0,
+          515.0
+        ]
+      ],
+      "bbox_rect": [
+        94.0,
+        492.0,
+        441.0,
+        515.0
+      ],
+      "bbox_width": 347.0,
+      "bbox_height": 23.0,
+      "bbox_area": 7981.0,
+      "center_x": 267.5,
+      "center_y": 503.5
+    },
+    {
+      "text": "16, Ibrahim Sherif Street,",
+      "raw_text": "16, Ibrahim Sherif Street,",
+      "lang": "en",
+      "confidence": 0.9857531785964966,
+      "bbox": [
+        [
+          92.0,
+          513.0
+        ],
+        [
+          334.0,
+          514.0
+        ],
+        [
+          334.0,
+          534.0
+        ],
+        [
+          92.0,
+          533.0
+        ]
+      ],
+      "bbox_rect": [
+        92.0,
+        513.0,
+        334.0,
+        534.0
+      ],
+      "bbox_width": 242.0,
+      "bbox_height": 21.0,
+      "bbox_area": 5082.0,
+      "center_x": 213.0,
+      "center_y": 523.5
+    },
+    {
+      "text": "Mostafa Kamel, Alexandria 21311,",
+      "raw_text": "Mostafa Kamel, Alexandria 21311,",
+      "lang": "en",
+      "confidence": 0.9847939014434814,
+      "bbox": [
+        [
+          91.0,
+          529.0
+        ],
+        [
+          410.0,
+          530.0
+        ],
+        [
+          410.0,
+          550.0
+        ],
+        [
+          91.0,
+          549.0
+        ]
+      ],
+      "bbox_rect": [
+        91.0,
+        529.0,
+        410.0,
+        550.0
+      ],
+      "bbox_width": 319.0,
+      "bbox_height": 21.0,
+      "bbox_area": 6699.0,
+      "center_x": 250.5,
+      "center_y": 539.5
+    },
+    {
+      "text": "Egypt.",
+      "raw_text": "Egypt.",
+      "lang": "en",
+      "confidence": 0.965472400188446,
+      "bbox": [
+        [
+          91.0,
+          545.0
+        ],
+        [
+          158.0,
+          545.0
+        ],
+        [
+          158.0,
+          566.0
+        ],
+        [
+          91.0,
+          566.0
+        ]
+      ],
+      "bbox_rect": [
+        91.0,
+        545.0,
+        158.0,
+        566.0
+      ],
+      "bbox_width": 67.0,
+      "bbox_height": 21.0,
+      "bbox_area": 1407.0,
+      "center_x": 124.5,
+      "center_y": 555.5
+    },
+    {
+      "text": "SIGNATURE",
+      "raw_text": "SIGNATURE",
+      "lang": "en",
+      "confidence": 0.9389036893844604,
+      "bbox": [
+        [
+          765.0,
+          565.0
+        ],
+        [
+          879.0,
+          565.0
+        ],
+        [
+          879.0,
+          589.0
+        ],
+        [
+          765.0,
+          589.0
+        ]
+      ],
+      "bbox_rect": [
+        765.0,
+        565.0,
+        879.0,
+        589.0
+      ],
+      "bbox_width": 114.0,
+      "bbox_height": 24.0,
+      "bbox_area": 2736.0,
+      "center_x": 822.0,
+      "center_y": 577.0
+    },
+    {
+      "text": "19919995001710000:99899",
+      "raw_text": "19919995001710000:99899",
+      "lang": "en",
+      "confidence": 0.7929157614707947,
+      "bbox": [
+        [
+          97.0,
+          589.0
+        ],
+        [
+          1269.0,
+          610.0
+        ],
+        [
+          1268.0,
+          647.0
+        ],
+        [
+          97.0,
+          626.0
+        ]
+      ],
+      "bbox_rect": [
+        97.0,
+        589.0,
+        1269.0,
+        647.0
+      ],
+      "bbox_width": 1172.0,
+      "bbox_height": 58.0,
+      "bbox_area": 67976.0,
+      "center_x": 682.75,
+      "center_y": 618.0
+    },
+    {
+      "text": "S5658664",
+      "raw_text": "S5658664",
+      "lang": "ar",
+      "confidence": 0.6159762144088745,
+      "bbox": [
+        [
+          1354.0,
+          72.0
+        ],
+        [
+          1543.0,
+          72.0
+        ],
+        [
+          1543.0,
+          93.0
+        ],
+        [
+          1354.0,
+          93.0
+        ]
+      ],
+      "bbox_rect": [
+        1354.0,
+        72.0,
+        1543.0,
+        93.0
+      ],
+      "bbox_width": 189.0,
+      "bbox_height": 21.0,
+      "bbox_area": 3969.0,
+      "center_x": 1448.5,
+      "center_y": 82.5
+    },
+    {
+      "text": "QNB",
+      "raw_text": "QNB",
+      "lang": "ar",
+      "confidence": 0.7205111384391785,
+      "bbox": [
+        [
+          203.0,
+          92.0
+        ],
+        [
+          335.0,
+          88.0
+        ],
+        [
+          336.0,
+          128.0
+        ],
+        [
+          204.0,
+          131.0
+        ]
+      ],
+      "bbox_rect": [
+        203.0,
+        88.0,
+        336.0,
+        131.0
+      ],
+      "bbox_width": 133.0,
+      "bbox_height": 43.0,
+      "bbox_area": 5719.0,
+      "center_x": 269.5,
+      "center_y": 109.75
+    },
+    {
+      "text": "ﺐﻨﻛ ﻖﻃﺭﻻﻮﻄﻨﯨ ﻻﺄﻬﻠﯨ",
+      "raw_text": "ىلهألا ىنطولارطق كنب",
+      "lang": "ar",
+      "confidence": 0.9447656869888306,
+      "bbox": [
+        [
+          721.0,
+          96.0
+        ],
+        [
+          967.0,
+          92.0
+        ],
+        [
+          968.0,
+          117.0
+        ],
+        [
+          722.0,
+          121.0
+        ]
+      ],
+      "bbox_rect": [
+        721.0,
+        92.0,
+        968.0,
+        121.0
+      ],
+      "bbox_width": 247.0,
+      "bbox_height": 29.0,
+      "bbox_area": 7163.0,
+      "center_x": 844.5,
+      "center_y": 106.5
+    },
+    {
+      "text": "AL AHL!",
+      "raw_text": "AL AHL!",
+      "lang": "ar",
+      "confidence": 0.9661740660667419,
+      "bbox": [
+        [
+          210.0,
+          133.0
+        ],
+        [
+          311.0,
+          133.0
+        ],
+        [
+          311.0,
+          154.0
+        ],
+        [
+          210.0,
+          154.0
+        ]
+      ],
+      "bbox_rect": [
+        210.0,
+        133.0,
+        311.0,
+        154.0
+      ],
+      "bbox_width": 101.0,
+      "bbox_height": 21.0,
+      "bbox_area": 2121.0,
+      "center_x": 260.5,
+      "center_y": 143.5
+    },
+    {
+      "text": "Catar National Bank ALAHL",
+      "raw_text": "Catar National Bank ALAHL",
+      "lang": "ar",
+      "confidence": 0.8916105031967163,
+      "bbox": [
+        [
+          721.0,
+          124.0
+        ],
+        [
+          968.0,
+          121.0
+        ],
+        [
+          969.0,
+          137.0
+        ],
+        [
+          721.0,
+          140.0
+        ]
+      ],
+      "bbox_rect": [
+        721.0,
+        121.0,
+        969.0,
+        140.0
+      ],
+      "bbox_width": 248.0,
+      "bbox_height": 19.0,
+      "bbox_area": 4712.0,
+      "center_x": 844.75,
+      "center_y": 130.5
+    },
+    {
+      "text": "DATE",
+      "raw_text": "DATE",
+      "lang": "ar",
+      "confidence": 0.9791897535324097,
+      "bbox": [
+        [
+          1076.0,
+          128.0
+        ],
+        [
+          1153.0,
+          126.0
+        ],
+        [
+          1154.0,
+          147.0
+        ],
+        [
+          1077.0,
+          149.0
+        ]
+      ],
+      "bbox_rect": [
+        1076.0,
+        126.0,
+        1154.0,
+        149.0
+      ],
+      "bbox_width": 78.0,
+      "bbox_height": 23.0,
+      "bbox_area": 1794.0,
+      "center_x": 1115.0,
+      "center_y": 137.5
+    },
+    {
+      "text": "B1lul7o?",
+      "raw_text": "B1lul7o?",
+      "lang": "ar",
+      "confidence": 0.6568115949630737,
+      "bbox": [
+        [
+          1251.0,
+          130.0
+        ],
+        [
+          1431.0,
+          128.0
+        ],
+        [
+          1431.0,
+          152.0
+        ],
+        [
+          1251.0,
+          154.0
+        ]
+      ],
+      "bbox_rect": [
+        1251.0,
+        128.0,
+        1431.0,
+        154.0
+      ],
+      "bbox_width": 180.0,
+      "bbox_height": 26.0,
+      "bbox_area": 4680.0,
+      "center_x": 1341.0,
+      "center_y": 141.0
+    },
+    {
+      "text": "AGAINST THIS CHEOUE",
+      "raw_text": "AGAINST THIS CHEOUE",
+      "lang": "ar",
+      "confidence": 0.9583335518836975,
+      "bbox": [
+        [
+          54.0,
+          206.0
+        ],
+        [
+          362.0,
+          206.0
+        ],
+        [
+          362.0,
+          226.0
+        ],
+        [
+          54.0,
+          226.0
+        ]
+      ],
+      "bbox_rect": [
+        54.0,
+        206.0,
+        362.0,
+        226.0
+      ],
+      "bbox_width": 308.0,
+      "bbox_height": 20.0,
+      "bbox_area": 6160.0,
+      "center_x": 208.0,
+      "center_y": 216.0
+    },
+    {
+      "text": "ﺵﺮﻛﺔﺑﻼﻤﻬﻴﻟﺰﻠﻠﺘﻌﻤﻳﺭ",
+      "raw_text": "ريمعتللزليهملابةكرش",
+      "lang": "ar",
+      "confidence": 0.9878595471382141,
+      "bbox": [
+        [
+          1048.0,
+          214.0
+        ],
+        [
+          1317.0,
+          209.0
+        ],
+        [
+          1317.0,
+          238.0
+        ],
+        [
+          1048.0,
+          242.0
+        ]
+      ],
+      "bbox_rect": [
+        1048.0,
+        209.0,
+        1317.0,
+        242.0
+      ],
+      "bbox_width": 269.0,
+      "bbox_height": 33.0,
+      "bbox_area": 8877.0,
+      "center_x": 1182.5,
+      "center_y": 225.75
+    },
+    {
+      "text": "ﺍﺪﻔﻋﻭﺍ ﺐﻣﻮﺠﺑ",
+      "raw_text": "بجومب اوعفدا",
+      "lang": "ar",
+      "confidence": 0.9607241153717041,
+      "bbox": [
+        [
+          1506.0,
+          210.0
+        ],
+        [
+          1672.0,
+          204.0
+        ],
+        [
+          1673.0,
+          225.0
+        ],
+        [
+          1507.0,
+          231.0
+        ]
+      ],
+      "bbox_rect": [
+        1506.0,
+        204.0,
+        1673.0,
+        231.0
+      ],
+      "bbox_width": 167.0,
+      "bbox_height": 27.0,
+      "bbox_area": 4509.0,
+      "center_x": 1589.5,
+      "center_y": 217.5
+    },
+    {
+      "text": "PﻡY TO",
+      "raw_text": "PمY TO",
+      "lang": "ar",
+      "confidence": 0.8018153309822083,
+      "bbox": [
+        [
+          52.0,
+          230.0
+        ],
+        [
+          148.0,
+          232.0
+        ],
+        [
+          148.0,
+          250.0
+        ],
+        [
+          51.0,
+          248.0
+        ]
+      ],
+      "bbox_rect": [
+        51.0,
+        230.0,
+        148.0,
+        250.0
+      ],
+      "bbox_width": 97.0,
+      "bbox_height": 20.0,
+      "bbox_area": 1940.0,
+      "center_x": 99.75,
+      "center_y": 240.0
+    },
+    {
+      "text": "THE sUM OF",
+      "raw_text": "THE sUM OF",
+      "lang": "ar",
+      "confidence": 0.9131973385810852,
+      "bbox": [
+        [
+          57.0,
+          316.0
+        ],
+        [
+          230.0,
+          318.0
+        ],
+        [
+          230.0,
+          340.0
+        ],
+        [
+          56.0,
+          337.0
+        ]
+      ],
+      "bbox_rect": [
+        56.0,
+        316.0,
+        230.0,
+        340.0
+      ],
+      "bbox_width": 174.0,
+      "bbox_height": 24.0,
+      "bbox_area": 4176.0,
+      "center_x": 143.25,
+      "center_y": 327.75
+    },
+    {
+      "text": "ﺐﻠﻏﻮﻗﺩﺭ",
+      "raw_text": "ردقوغلب",
+      "lang": "ar",
+      "confidence": 0.6365079283714294,
+      "bbox": [
+        [
+          1079.0,
+          324.0
+        ],
+        [
+          1176.0,
+          322.0
+        ],
+        [
+          1176.0,
+          340.0
+        ],
+        [
+          1080.0,
+          343.0
+        ]
+      ],
+      "bbox_rect": [
+        1079.0,
+        322.0,
+        1176.0,
+        343.0
+      ],
+      "bbox_width": 97.0,
+      "bbox_height": 21.0,
+      "bbox_area": 2037.0,
+      "center_x": 1127.75,
+      "center_y": 332.25
+    },
+    {
+      "text": "EGP",
+      "raw_text": "EGP",
+      "lang": "ar",
+      "confidence": 0.9639911651611328,
+      "bbox": [
+        [
+          1246.0,
+          327.0
+        ],
+        [
+          1327.0,
+          327.0
+        ],
+        [
+          1327.0,
+          357.0
+        ],
+        [
+          1246.0,
+          357.0
+        ]
+      ],
+      "bbox_rect": [
+        1246.0,
+        327.0,
+        1327.0,
+        357.0
+      ],
+      "bbox_width": 81.0,
+      "bbox_height": 30.0,
+      "bbox_area": 2430.0,
+      "center_x": 1286.5,
+      "center_y": 342.0
+    },
+    {
+      "text": "21,115.00a.",
+      "raw_text": "21,115.00a.",
+      "lang": "ar",
+      "confidence": 0.873613178730011,
+      "bbox": [
+        [
+          1459.0,
+          344.0
+        ],
+        [
+          1601.0,
+          344.0
+        ],
+        [
+          1601.0,
+          365.0
+        ],
+        [
+          1459.0,
+          365.0
+        ]
+      ],
+      "bbox_rect": [
+        1459.0,
+        344.0,
+        1601.0,
+        365.0
+      ],
+      "bbox_width": 142.0,
+      "bbox_height": 21.0,
+      "bbox_area": 2982.0,
+      "center_x": 1530.0,
+      "center_y": 354.5
+    },
+    {
+      "text": "SoerlEy leatire",
+      "raw_text": "SoerlEy leatire",
+      "lang": "ar",
+      "confidence": 0.7363410592079163,
+      "bbox": [
+        [
+          1284.0,
+          397.0
+        ],
+        [
+          1379.0,
+          397.0
+        ],
+        [
+          1379.0,
+          410.0
+        ],
+        [
+          1284.0,
+          410.0
+        ]
+      ],
+      "bbox_rect": [
+        1284.0,
+        397.0,
+        1379.0,
+        410.0
+      ],
+      "bbox_width": 95.0,
+      "bbox_height": 13.0,
+      "bbox_area": 1235.0,
+      "center_x": 1331.5,
+      "center_y": 403.5
+    },
+    {
+      "text": "Ircl deg",
+      "raw_text": "Ircl deg",
+      "lang": "ar",
+      "confidence": 0.7110811471939087,
+      "bbox": [
+        [
+          1283.0,
+          410.0
+        ],
+        [
+          1333.0,
+          407.0
+        ],
+        [
+          1334.0,
+          421.0
+        ],
+        [
+          1284.0,
+          424.0
+        ]
+      ],
+      "bbox_rect": [
+        1283.0,
+        407.0,
+        1334.0,
+        424.0
+      ],
+      "bbox_width": 51.0,
+      "bbox_height": 17.0,
+      "bbox_area": 867.0,
+      "center_x": 1308.5,
+      "center_y": 415.5
+    },
+    {
+      "text": "Ehe akﺍlalﺍ",
+      "raw_text": "اlalاEhe ak",
+      "lang": "ar",
+      "confidence": 0.5528354048728943,
+      "bbox": [
+        [
+          1282.0,
+          421.0
+        ],
+        [
+          1394.0,
+          420.0
+        ],
+        [
+          1394.0,
+          434.0
+        ],
+        [
+          1282.0,
+          435.0
+        ]
+      ],
+      "bbox_rect": [
+        1282.0,
+        420.0,
+        1394.0,
+        435.0
+      ],
+      "bbox_width": 112.0,
+      "bbox_height": 15.0,
+      "bbox_area": 1680.0,
+      "center_x": 1338.0,
+      "center_y": 427.5
+    },
+    {
+      "text": "1",
+      "raw_text": "1",
+      "lang": "ar",
+      "confidence": 0.5816566348075867,
+      "bbox": [
+        [
+          1541.0,
+          419.0
+        ],
+        [
+          1597.0,
+          419.0
+        ],
+        [
+          1597.0,
+          429.0
+        ],
+        [
+          1541.0,
+          429.0
+        ]
+      ],
+      "bbox_rect": [
+        1541.0,
+        419.0,
+        1597.0,
+        429.0
+      ],
+      "bbox_width": 56.0,
+      "bbox_height": 10.0,
+      "bbox_area": 560.0,
+      "center_x": 1569.0,
+      "center_y": 424.0
+    },
+    {
+      "text": "ASHRAF SAAD ABDELMEGUID EL NOZAHI",
+      "raw_text": "ASHRAF SAAD ABDELMEGUID EL NOZAHI",
+      "lang": "ar",
+      "confidence": 0.9253950119018555,
+      "bbox": [
+        [
+          93.0,
+          446.0
+        ],
+        [
+          629.0,
+          448.0
+        ],
+        [
+          629.0,
+          468.0
+        ],
+        [
+          93.0,
+          466.0
+        ]
+      ],
+      "bbox_rect": [
+        93.0,
+        446.0,
+        629.0,
+        468.0
+      ],
+      "bbox_width": 536.0,
+      "bbox_height": 22.0,
+      "bbox_area": 11792.0,
+      "center_x": 361.0,
+      "center_y": 457.0
+    },
+    {
+      "text": "00037 00017 10035455165-17 EGp",
+      "raw_text": "00037 00017 10035455165-17 EGp",
+      "lang": "ar",
+      "confidence": 0.9214646816253662,
+      "bbox": [
+        [
+          95.0,
+          468.0
+        ],
+        [
+          551.0,
+          469.0
+        ],
+        [
+          551.0,
+          490.0
+        ],
+        [
+          95.0,
+          489.0
+        ]
+      ],
+      "bbox_rect": [
+        95.0,
+        468.0,
+        551.0,
+        490.0
+      ],
+      "bbox_width": 456.0,
+      "bbox_height": 22.0,
+      "bbox_area": 10032.0,
+      "center_x": 323.0,
+      "center_y": 479.0
+    },
+    {
+      "text": "Moustafa amelBraneh",
+      "raw_text": "Moustafa amelBraneh",
+      "lang": "ar",
+      "confidence": 0.8844988942146301,
+      "bbox": [
+        [
+          97.0,
+          494.0
+        ],
+        [
+          440.0,
+          495.0
+        ],
+        [
+          440.0,
+          513.0
+        ],
+        [
+          97.0,
+          512.0
+        ]
+      ],
+      "bbox_rect": [
+        97.0,
+        494.0,
+        440.0,
+        513.0
+      ],
+      "bbox_width": 343.0,
+      "bbox_height": 19.0,
+      "bbox_area": 6517.0,
+      "center_x": 268.5,
+      "center_y": 503.5
+    },
+    {
+      "text": "1IIbrahim Sherif Street",
+      "raw_text": "1IIbrahim Sherif Street",
+      "lang": "ar",
+      "confidence": 0.8693714141845703,
+      "bbox": [
+        [
+          97.0,
+          518.0
+        ],
+        [
+          332.0,
+          518.0
+        ],
+        [
+          332.0,
+          532.0
+        ],
+        [
+          97.0,
+          532.0
+        ]
+      ],
+      "bbox_rect": [
+        97.0,
+        518.0,
+        332.0,
+        532.0
+      ],
+      "bbox_width": 235.0,
+      "bbox_height": 14.0,
+      "bbox_area": 3290.0,
+      "center_x": 214.5,
+      "center_y": 525.0
+    },
+    {
+      "text": "Mostafa Kamel, Alexandria 21311",
+      "raw_text": "Mostafa Kamel, Alexandria 21311",
+      "lang": "ar",
+      "confidence": 0.9511669278144836,
+      "bbox": [
+        [
+          93.0,
+          529.0
+        ],
+        [
+          408.0,
+          531.0
+        ],
+        [
+          408.0,
+          551.0
+        ],
+        [
+          93.0,
+          549.0
+        ]
+      ],
+      "bbox_rect": [
+        93.0,
+        529.0,
+        408.0,
+        551.0
+      ],
+      "bbox_width": 315.0,
+      "bbox_height": 22.0,
+      "bbox_area": 6930.0,
+      "center_x": 250.5,
+      "center_y": 540.0
+    },
+    {
+      "text": "Eoypt.",
+      "raw_text": "Eoypt.",
+      "lang": "ar",
+      "confidence": 0.9149207472801208,
+      "bbox": [
+        [
+          94.0,
+          548.0
+        ],
+        [
+          156.0,
+          548.0
+        ],
+        [
+          156.0,
+          565.0
+        ],
+        [
+          94.0,
+          565.0
+        ]
+      ],
+      "bbox_rect": [
+        94.0,
+        548.0,
+        156.0,
+        565.0
+      ],
+      "bbox_width": 62.0,
+      "bbox_height": 17.0,
+      "bbox_area": 1054.0,
+      "center_x": 125.0,
+      "center_y": 556.5
+    },
+    {
+      "text": "ﻞﺗﻮﻘﻴﻋ",
+      "raw_text": "عيقوتل",
+      "lang": "ar",
+      "confidence": 0.9010884761810303,
+      "bbox": [
+        [
+          1613.0,
+          573.0
+        ],
+        [
+          1676.0,
+          569.0
+        ],
+        [
+          1677.0,
+          599.0
+        ],
+        [
+          1615.0,
+          603.0
+        ]
+      ],
+      "bbox_rect": [
+        1613.0,
+        569.0,
+        1677.0,
+        603.0
+      ],
+      "bbox_width": 64.0,
+      "bbox_height": 34.0,
+      "bbox_area": 2176.0,
+      "center_x": 1645.25,
+      "center_y": 586.0
+    },
+    {
+      "text": "stsstout fhlIuoEDDh.5ieeh.",
+      "raw_text": "stsstout fhlIuoEDDh.5ieeh.",
+      "lang": "ar",
+      "confidence": 0.5616836547851562,
+      "bbox": [
+        [
+          99.0,
+          593.0
+        ],
+        [
+          1267.0,
+          613.0
+        ],
+        [
+          1266.0,
+          643.0
+        ],
+        [
+          99.0,
+          623.0
+        ]
+      ],
+      "bbox_rect": [
+        99.0,
+        593.0,
+        1267.0,
+        643.0
+      ],
+      "bbox_width": 1168.0,
+      "bbox_height": 50.0,
+      "bbox_area": 58400.0,
+      "center_x": 682.75,
+      "center_y": 618.0
+    }
+  ],
+  "extraction_method": "patterns",
+  "image_metadata": {
+    "width": 1677,
+    "height": 677,
+    "channels": 3,
+    "dtype": "uint8",
+    "aspect_ratio": 2.477105,
+    "orientation": "landscape",
+    "brightness_mean_gray": 175.51462263361546,
+    "contrast_std_gray": 117.30721523966464,
+    "sharpness_laplacian_var": 11113.618346683748,
+    "channel_means_bgr": [
+      175.51462263361546,
+      175.51462263361546,
+      175.51462263361546
+    ],
+    "channel_stds_bgr": [
+      117.30721523966464,
+      117.30721523966464,
+      117.30721523966464
+    ],
+    "channel_mins_bgr": [
+      0,
+      0,
+      0
+    ],
+    "channel_maxs_bgr": [
+      255,
+      255,
+      255
+    ],
+    "image_hash": -9069236772031408079,
+    "processed_at": "2025-09-14T15:13:04.017967",
+    "system": {
+      "os": "Windows-11-10.0.26100-SP0",
+      "python_version": "3.13.3"
+    },
+    "filename": "30010.jpg",
+    "file_size_bytes": 149006,
+    "mime_type": "image/jpeg",
+    "pil_mode": "L",
+    "pil_dpi": [
+      200,
+      200
+    ],
+    "exif": null
+  },
+  "ocr_metadata": {
+    "engine": "PaddleOCR",
+    "paddleocr_version": "3.2.0",
+    "languages": [
+      "en",
+      "ar"
+    ],
+    "min_conf_accept": 0.3,
+    "detections_total": 53,
+    "detections_by_lang": {
+      "en": 26,
+      "ar": 27
+    },
+    "timings_ms": {
+      "ocr_total_ms": 7649
+    },
+    "processing_tag": "[BATCH-9]"
+  }
+}

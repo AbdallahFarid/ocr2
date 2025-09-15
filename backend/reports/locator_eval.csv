@@ -1,0 +1,86 @@
+file,bank,field,method,confidence,bbox_x1,bbox_y1,bbox_x2,bbox_y2,pattern_text,roi_text,match_flag
+30026_result.json,FABMISR,bank_name,region_regex,1.000,1,50,336,104,FABMISR,FABMISR,1
+30026_result.json,FABMISR,date,region_regex,0.937,1215,38,1550,92,·31/0ct/2025,Date,0
+30026_result.json,FABMISR,cheque_number,region_regex,0.987,581,20,916,74,No : 11637504,No : 11637504,1
+30026_result.json,FABMISR,amount_numeric,region_regex,1.000,1345,259,1677,313,"24,920.00","24,920.00",1
+30026_result.json,FABMISR,name,anchor_payee_scored,0.950,641,147,1395,214,ﺵﺮﻛﺔﺑﻼﻣ ﻪﻴﻟﺰﻠﻠﺘﻌﻤﻳﺭ,ﺵﺮﻛﺔﺑﻼﻣ ﻪﻴﻟﺰﻠﻠﺘﻌﻤﻳﺭ,1
+30027_result.json,FABMISR,bank_name,region_regex,1.000,4,49,339,103,FABMISR,FABMISR,1
+30027_result.json,FABMISR,date,region_regex,0.999,1209,35,1544,89,30/Nov/2025,Date,0
+30027_result.json,FABMISR,cheque_number,region_regex,0.949,573,19,908,73,No : 11637505,No : 11637505,1
+30027_result.json,FABMISR,amount_numeric,region_regex,1.000,1345,256,1677,310,"24,920.00",EGP,0
+30027_result.json,FABMISR,name,anchor_payee_scored,0.979,636,144,1390,211,ﺵﺮﻛﺔﺑﻼﻤﻬﻴﻟﺰﻠﻠﺘﻌﻤﻳﺭ,ﺵﺮﻛﺔﺑﻼﻤﻬﻴﻟﺰﻠﻠﺘﻌﻤﻳﺭ,1
+30028_result.json,FABMISR,bank_name,template_roi,0.900,0,35,369,102,,,0
+30028_result.json,FABMISR,date,template_roi,0.900,1176,22,1545,89,,,0
+30028_result.json,FABMISR,cheque_number,template_roi,0.900,537,7,906,74,,,0
+30028_result.json,FABMISR,amount_numeric,template_roi,0.900,1306,244,1675,311,,,0
+30028_result.json,FABMISR,name,template_roi,0.900,599,131,1387,211,,,0
+30029_result.json,FABMISR,bank_name,template_roi,0.900,0,35,369,102,,,0
+30029_result.json,FABMISR,date,template_roi,0.900,1176,22,1545,89,,,0
+30029_result.json,FABMISR,cheque_number,template_roi,0.900,537,7,906,74,,,0
+30029_result.json,FABMISR,amount_numeric,template_roi,0.900,1306,244,1675,311,,,0
+30029_result.json,FABMISR,name,template_roi,0.900,599,131,1387,211,,,0
+30030_result.json,FABMISR,bank_name,template_roi,0.900,0,35,369,102,,,0
+30030_result.json,FABMISR,date,template_roi,0.900,1176,22,1545,89,,,0
+30030_result.json,FABMISR,cheque_number,template_roi,0.900,537,7,906,74,,,0
+30030_result.json,FABMISR,amount_numeric,template_roi,0.900,1306,244,1675,311,,,0
+30030_result.json,FABMISR,name,template_roi,0.900,599,131,1387,211,,,0
+30031_result.json,FABMISR,bank_name,template_roi,0.900,0,35,369,102,,,0
+30031_result.json,FABMISR,date,template_roi,0.900,1176,22,1545,89,,,0
+30031_result.json,FABMISR,cheque_number,template_roi,0.900,537,7,906,74,,,0
+30031_result.json,FABMISR,amount_numeric,template_roi,0.900,1306,244,1675,311,,,0
+30031_result.json,FABMISR,name,template_roi,0.900,599,131,1387,211,,,0
+30032_result.json,FABMISR,bank_name,template_roi,0.900,0,35,369,102,,,0
+30032_result.json,FABMISR,date,template_roi,0.900,1176,22,1545,89,,,0
+30032_result.json,FABMISR,cheque_number,template_roi,0.900,537,7,906,74,,,0
+30032_result.json,FABMISR,amount_numeric,template_roi,0.900,1306,244,1675,311,,,0
+30032_result.json,FABMISR,name,template_roi,0.900,599,131,1387,211,,,0
+30033_result.json,FABMISR,bank_name,region_regex,1.000,1,47,336,101,FABMISR,FABMISR,1
+30033_result.json,FABMISR,date,region_regex,0.988,1202,35,1537,89,31/May/2026,Date,0
+30033_result.json,FABMISR,cheque_number,region_regex,1.000,570,20,905,74,No:11637511,No:11637511,1
+30033_result.json,FABMISR,amount_numeric,region_regex,1.000,1341,257,1676,311,"31,149.00",EGP,0
+30033_result.json,FABMISR,name,anchor_payee_scored,0.955,633,143,1387,210,ﺵﺮﻛﺓ ﺏﻼﻣ ﻪﻴﻟﺯ ﻞﻠﺘﻌﻤﻳﺭ,ﺵﺮﻛﺓ ﺏﻼﻣ ﻪﻴﻟﺯ ﻞﻠﺘﻌﻤﻳﺭ,1
+30034_result.json,FABMISR,bank_name,region_regex,1.000,0,49,335,103,FABMISR,FABMISR,1
+30034_result.json,FABMISR,date,region_regex,0.973,1213,35,1548,89,30/Jun/2026,Date,0
+30034_result.json,FABMISR,cheque_number,region_regex,0.977,574,21,909,75,No : 11637512,No : 11637512,1
+30034_result.json,FABMISR,amount_numeric,region_regex,1.000,1345,257,1677,311,"31,149.00","31,149.00",1
+30034_result.json,FABMISR,name,anchor_payee_scored,0.999,632,144,1386,211,ﺵﺮﻛﺔﺑﻼﻤﻬﻴﻟﺰﻠﻠﺘﻌﻤﻳﺭ,ﺵﺮﻛﺔﺑﻼﻤﻬﻴﻟﺰﻠﻠﺘﻌﻤﻳﺭ,1
+30035_result.json,FABMISR,bank_name,region_regex,1.000,0,48,335,102,FABMISR,FABMISR,1
+30035_result.json,FABMISR,date,template_roi,0.900,1176,22,1545,89,,Date,0
+30035_result.json,FABMISR,cheque_number,region_regex,0.983,570,20,905,74,No: 11637513,No: 11637513,1
+30035_result.json,FABMISR,amount_numeric,region_regex,1.000,1341,257,1676,311,"31,149.00","31,149.00",1
+30035_result.json,FABMISR,name,anchor_payee_scored,0.960,632,143,1386,210,ﺵﺮﻛﺓ ﺏﻼﻣ ﻪﻴﻟﺰﻠﻠﺘﻌﻤﻳﺭ,ﺵﺮﻛﺓ ﺏﻼﻣ ﻪﻴﻟﺰﻠﻠﺘﻌﻤﻳﺭ,1
+30036_result.json,FABMISR,bank_name,region_regex,1.000,12,48,347,102,FABMISR,FABMISR,1
+30036_result.json,FABMISR,date,region_regex,1.000,1199,35,1534,89,31/Aug/2026,ﺓ,0
+30036_result.json,FABMISR,cheque_number,region_regex,0.969,565,20,900,74,No : 11637514,No : 11637514,1
+30036_result.json,FABMISR,amount_numeric,region_regex,1.000,1337,257,1672,311,"31,149.00","31,149.00",1
+30036_result.json,FABMISR,name,anchor_payee_scored,1.000,623,143,1377,210,ﺵﺮﻛﺔﺑﻼﻤﻬﻴﻟﺰﻠﻠﺘﻌﻤﻳﺭ,ﺵﺮﻛﺔﺑﻼﻤﻬﻴﻟﺰﻠﻠﺘﻌﻤﻳﺭ,1
+30037_result.json,FABMISR,bank_name,region_regex,1.000,7,49,342,103,FABMISR,FABMISR,1
+30037_result.json,FABMISR,date,region_regex,0.999,1209,35,1544,89,30/Sep/2026,Date,0
+30037_result.json,FABMISR,cheque_number,region_regex,0.985,567,19,902,73,No : 11637515,No : 11637515,1
+30037_result.json,FABMISR,amount_numeric,region_regex,1.000,1340,259,1675,313,"31,149.00",EGP,0
+30037_result.json,FABMISR,name,anchor_payee_scored,0.999,628,144,1382,211,ﺵﺮﻛﺔﺑﻼﻤﻬﻴﻟﺰﻠﻠﺘﻌﻤﻳﺭ,ﺵﺮﻛﺔﺑﻼﻤﻬﻴﻟﺰﻠﻠﺘﻌﻤﻳﺭ,1
+30038_result.json,FABMISR,bank_name,region_regex,1.000,9,48,344,102,FABMISR,FABMISR,1
+30038_result.json,FABMISR,date,region_regex,0.975,1207,33,1542,87,31/Oct/2026,Date,0
+30038_result.json,FABMISR,cheque_number,region_regex,0.991,568,18,903,72,No : 11637516,No : 11637516,1
+30038_result.json,FABMISR,amount_numeric,region_regex,1.000,1337,255,1672,309,"31,149.00","31,149.00",1
+30038_result.json,FABMISR,name,anchor_payee_scored,1.000,631,142,1385,209,ﺵﺮﻛﺔﺑﻼﻤﻬﻴﻟﺰﻠﻠﺘﻌﻤﻳﺭ,ﺵﺮﻛﺔﺑﻼﻤﻬﻴﻟﺰﻠﻠﺘﻌﻤﻳﺭ,1
+summary.json,FABMISR,<error>,,,,,,,Image dimensions missing in OCR JSON,,0
+30002_result.json,QNB,<error>,,,,,,,Template not found: D:\Projects\palmprojects\ocr2\backend\app\ocr\templates\QNB\auto.json,,0
+30003_result.json,QNB,<error>,,,,,,,Template not found: D:\Projects\palmprojects\ocr2\backend\app\ocr\templates\QNB\auto.json,,0
+30004_result.json,QNB,<error>,,,,,,,Template not found: D:\Projects\palmprojects\ocr2\backend\app\ocr\templates\QNB\auto.json,,0
+30005_result.json,QNB,<error>,,,,,,,Template not found: D:\Projects\palmprojects\ocr2\backend\app\ocr\templates\QNB\auto.json,,0
+30006_result.json,QNB,<error>,,,,,,,Template not found: D:\Projects\palmprojects\ocr2\backend\app\ocr\templates\QNB\auto.json,,0
+30007_result.json,QNB,<error>,,,,,,,Template not found: D:\Projects\palmprojects\ocr2\backend\app\ocr\templates\QNB\auto.json,,0
+30008_result.json,QNB,<error>,,,,,,,Template not found: D:\Projects\palmprojects\ocr2\backend\app\ocr\templates\QNB\auto.json,,0
+30009_result.json,QNB,<error>,,,,,,,Template not found: D:\Projects\palmprojects\ocr2\backend\app\ocr\templates\QNB\auto.json,,0
+30010_result.json,QNB,<error>,,,,,,,Template not found: D:\Projects\palmprojects\ocr2\backend\app\ocr\templates\QNB\auto.json,,0
+30011_result.json,QNB,<error>,,,,,,,Template not found: D:\Projects\palmprojects\ocr2\backend\app\ocr\templates\QNB\auto.json,,0
+30012_result.json,QNB,<error>,,,,,,,Template not found: D:\Projects\palmprojects\ocr2\backend\app\ocr\templates\QNB\auto.json,,0
+30013_result.json,QNB,<error>,,,,,,,Template not found: D:\Projects\palmprojects\ocr2\backend\app\ocr\templates\QNB\auto.json,,0
+30014_result.json,QNB,<error>,,,,,,,Template not found: D:\Projects\palmprojects\ocr2\backend\app\ocr\templates\QNB\auto.json,,0
+30015_result.json,QNB,<error>,,,,,,,Template not found: D:\Projects\palmprojects\ocr2\backend\app\ocr\templates\QNB\auto.json,,0
+30016_result.json,QNB,<error>,,,,,,,Template not found: D:\Projects\palmprojects\ocr2\backend\app\ocr\templates\QNB\auto.json,,0
+30017_result.json,QNB,<error>,,,,,,,Template not found: D:\Projects\palmprojects\ocr2\backend\app\ocr\templates\QNB\auto.json,,0
+30018_result.json,QNB,<error>,,,,,,,Template not found: D:\Projects\palmprojects\ocr2\backend\app\ocr\templates\QNB\auto.json,,0
+30019_result.json,QNB,<error>,,,,,,,Template not found: D:\Projects\palmprojects\ocr2\backend\app\ocr\templates\QNB\auto.json,,0
+summary.json,QNB,<error>,,,,,,,Image dimensions missing in OCR JSON,,0
