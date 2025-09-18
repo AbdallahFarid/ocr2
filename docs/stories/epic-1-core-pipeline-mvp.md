@@ -1,6 +1,6 @@
 # Epic 1 — Core Pipeline MVP
 
-Status: Draft
+Status: Done
 
 ## Epic Goal
 Deliver an end-to-end cheque processing pipeline covering preflight, classification, field location, OCR, and parsing & normalization, ready for validation and routing. This establishes the backbone for human-in-the-loop review and downstream integrations.
@@ -37,4 +37,9 @@ Implements core pipeline components per architecture, prioritizing determinism a
 ## Definition of Done
 - Stories 1.1–1.5 completed with passing tests.
 - Pipeline documented and demoed on golden samples.
+
+## Change Log
+| Date | Version | Description | Author |
+|------|---------|-------------|--------|
+| 2025-09-15 | 1.0.0 | Epic 1 MVP completed: Preflight, Classifier, Locator (FABMISR+QNB+fallback), OCR, Parsing. Amount-in-words deferred. Unknown-bank fallback available but not primary. | dev-agent |
 

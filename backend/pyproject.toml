@@ -1,3 +1,7 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
 [project]
 name = "ocr2-backend"
 version = "0.1.0"
@@ -7,11 +11,31 @@ requires-python = ">=3.10"
 dependencies = [
   "opencv-python>=4.8",
   "numpy>=1.24",
+  "fastapi>=0.111,<1.0",
+  "pydantic>=2.6",
+  "uvicorn[standard]>=0.29",
+  "python-multipart>=0.0.7",
+  "arabic-reshaper>=3.0.0",
+  "python-bidi>=0.4.2",
+  "openpyxl>=3.1",
+]
+
+[tool.setuptools]
+include-package-data = true
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["app*"]
+exclude = [
+  "reports*",
+  "tests*",
+  "tools*",
 ]
 
 [project.optional-dependencies]
 dev = [
   "pytest>=7.4",
+  "httpx>=0.26",
 ]
 
 [tool.pytest.ini_options]

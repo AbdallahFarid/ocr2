@@ -28,3 +28,14 @@ class ClassifierSettings:
 
 
 DEFAULT_CLASSIFIER = ClassifierSettings()
+
+
+@dataclass
+class ConfidenceSettings:
+    # If parse fails, multiply by this factor instead of zeroing confidence
+    parse_fail_factor: float = float(os.getenv("CONF_PARSE_FAIL_FACTOR", 0.97))
+    # Global threshold for auto-approve decisions
+    global_threshold: float = float(os.getenv("CONF_GLOBAL_THRESHOLD", 0.995))
+
+
+DEFAULT_CONFIDENCE = ConfidenceSettings()

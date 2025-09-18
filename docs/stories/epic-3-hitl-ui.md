@@ -1,6 +1,6 @@
 # Epic 3 — Human-in-the-Loop (HITL) Reviewer UI
 
-Status: Draft
+Status: Done
 
 ## Epic Goal
 Provide a fast, low-friction reviewer experience to correct low-confidence fields and feed improvements back into templates and training datasets.
@@ -24,3 +24,4 @@ Implements a reviewer console with side-by-side cheque image and extracted field
 
 ## Definition of Done
 - Stories 3.1–3.3 completed with usability validated by pilot reviewers.
+- Corrections persisted to audit JSON and appended to CSV queue for template/dataset updates.

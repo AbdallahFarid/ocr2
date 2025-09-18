@@ -1,0 +1,123 @@
+{
+  "schema_version": 1,
+  "generated_at": "2025-09-16T12:13:41.929205+00:00",
+  "correlation_id": null,
+  "bank": "QNB",
+  "file": "20250916_121318_7j4puv.jpg",
+  "source_csv": null,
+  "decision": {
+    "decision": "review",
+    "stp": false,
+    "overall_conf": 0.9209535801868558,
+    "low_conf_fields": [
+      "cheque_number",
+      "name"
+    ],
+    "reasons": [
+      "low_confidence:cheque_number:0.994<thr0.995",
+      "validation_failed:cheque_number:VALIDATION_FAIL",
+      "low_confidence:name:0.921<thr0.995",
+      "validation_failed:name:VALIDATION_FAIL"
+    ]
+  },
+  "fields": {
+    "bank_name": {
+      "field_conf": 0.9698772555589675,
+      "loc_conf": 0.9998734593391418,
+      "ocr_conf": 1.0,
+      "validation": {
+        "ok": false
+      },
+      "parse_ok": false,
+      "parse_norm": null,
+      "ocr_text": "QNB",
+      "ocr_lang": "en",
+      "meets_threshold": false,
+      "bbox": [
+        94,
+        85,
+        429,
+        139
+      ]
+    },
+    "date": {
+      "field_conf": 0.9979383732275409,
+      "loc_conf": 0.9992363452911377,
+      "ocr_conf": 0.9987010359764099,
+      "validation": {
+        "ok": true
+      },
+      "parse_ok": true,
+      "parse_norm": "2026-01-31",
+      "ocr_text": "31/Jan/2026",
+      "ocr_lang": "en",
+      "meets_threshold": true,
+      "bbox": [
+        1169,
+        102,
+        1504,
+        156
+      ]
+    },
+    "cheque_number": {
+      "field_conf": 0.994137887020532,
+      "loc_conf": 0.9951087832450867,
+      "ocr_conf": 0.9990243315696716,
+      "validation": {
+        "ok": false
+      },
+      "parse_ok": true,
+      "parse_norm": "57030084",
+      "ocr_text": "57030084",
+      "ocr_lang": "en",
+      "meets_threshold": false,
+      "bbox": [
+        1323,
+        30,
+        1676,
+        84
+      ]
+    },
+    "amount_numeric": {
+      "field_conf": 0.9998480734168496,
+      "loc_conf": 0.9999133348464966,
+      "ocr_conf": 0.999934732913971,
+      "validation": {
+        "ok": true
+      },
+      "parse_ok": true,
+      "parse_norm": "21116.00",
+      "ocr_text": "21,116.00",
+      "ocr_lang": "en",
+      "meets_threshold": true,
+      "bbox": [
+        1367,
+        313,
+        1677,
+        367
+      ]
+    },
+    "name": {
+      "field_conf": 0.9209535801868558,
+      "loc_conf": 0.9764605164527893,
+      "ocr_conf": 0.9431549608707428,
+      "validation": {
+        "ok": false
+      },
+      "parse_ok": true,
+      "parse_norm": "ريمعتلل زليه ملاب ةكرشQNB First",
+      "ocr_text": "ريمعتلل زليه ملاب ةكرشQNB First",
+      "ocr_lang": "ar",
+      "meets_threshold": false,
+      "bbox": [
+        803,
+        182,
+        1557,
+        249
+      ]
+    }
+  },
+  "meta": {
+    "source": "upload"
+  }
+}

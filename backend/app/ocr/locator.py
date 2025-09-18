@@ -26,6 +26,125 @@ def load_template(bank_id: str, template_id: str = "default") -> Dict[str, Any]:
         return json.load(f)
 
 
+def _locate_unknown(
+    image_shape: Tuple[int, int],
+    ocr_lines: Optional[List[Dict[str, Any]]],
+) -> Dict[str, Dict[str, Any]]:
+    """Heuristic locator for unknown templates using only OCR lines.
+
+    Returns minimal set of fields: bank_name, date, cheque_number, amount_numeric, name
+    """
+    results: Dict[str, Dict[str, Any]] = {}
+    if not ocr_lines:
+        return results
+    h, w = image_shape
+
+    def _bbox_around(px: int, py: int, wf: float = 0.20, hf: float = 0.08) -> Tuple[int, int, int, int]:
+        bw, bh = int(wf * w), int(hf * h)
+        x1 = max(0, px - bw // 2)
+        y1 = max(0, py - bh // 2)
+        x2 = min(w, x1 + bw)
+        y2 = min(h, y1 + bh)
+        return (x1, y1, x2, y2)
+
+    def _best_match(pattern: str) -> Optional[Dict[str, Any]]:
+        rx = re.compile(pattern, flags=re.IGNORECASE)
+        best = None
+        best_conf = -1.0
+        for ln in ocr_lines:
+            txt = str(ln.get("text", ""))
+            if rx.search(txt):
+                c = float(ln.get("confidence", 0.5))
+                if c > best_conf:
+                    best = ln
+                    best_conf = c
+        return best
+
+    # bank_name: unknown
+    results["bank_name"] = {
+        "bbox": [0, 0, int(0.2 * w), int(0.1 * h)],
+        "confidence": 0.5,
+        "method": "unknown_bank",
+        "ocr_engine": "latin",
+        "text": "UNKNOWN",
+    }
+
+    # date
+    date_ln = _best_match(r"\b\d{1,2}[\/\-][A-Za-z]{3}[\/\-]\d{2,4}\b")
+    if date_ln:
+        px, py = int(date_ln["pos"][0]), int(date_ln["pos"][1])
+        results["date"] = {
+            "bbox": list(_bbox_around(px, py)),
+            "confidence": float(date_ln.get("confidence", 0.85)),
+            "method": "unknown_regex",
+            "ocr_engine": "latin",
+            "text": str(date_ln.get("text", "")),
+        }
+
+    # amount
+    amt_ln = _best_match(r"\b\d{1,3}(?:,\d{3})*(?:\.\d{2})?\b")
+    if amt_ln:
+        px, py = int(amt_ln["pos"][0]), int(amt_ln["pos"][1])
+        results["amount_numeric"] = {
+            "bbox": list(_bbox_around(px, py, wf=0.22, hf=0.10)),
+            "confidence": float(amt_ln.get("confidence", 0.90)),
+            "method": "unknown_regex",
+            "ocr_engine": "latin",
+            "text": str(amt_ln.get("text", "")),
+        }
+
+    # cheque number
+    num_ln = _best_match(r"\b\d{6,}\b")
+    if num_ln:
+        px, py = int(num_ln["pos"][0]), int(num_ln["pos"][1])
+        results["cheque_number"] = {
+            "bbox": list(_bbox_around(px, py, wf=0.26, hf=0.10)),
+            "confidence": float(num_ln.get("confidence", 0.85)),
+            "method": "unknown_regex",
+            "ocr_engine": "latin",
+            "text": str(num_ln.get("text", "")),
+        }
+
+    # name: prefer Arabic, few digits, not a label, upper half band
+    best_name = None
+    best_score = -1.0
+    for ln in ocr_lines:
+        txt = str(ln.get("text", ""))
+        t = txt
+        conf = float(ln.get("confidence", 0.5))
+        px, py = int(ln.get("pos", [0, 0])[0]), int(ln.get("pos", [0, 0])[1])
+        # Skip obvious labels
+        if re.search(r"(?i)\b(pay\s*to|against\s+this\s+cheque|date|egp)\b", t):
+            continue
+        if re.search(r"شيك|ادفع|بموجب|الشيك|هذا", t):
+            continue
+        ar = 1.0 if re.search(r"[\u0600-\u06FF]", t) else 0.0
+        if ar == 0.0:
+            continue
+        digits = sum(ch.isdigit() for ch in t)
+        length = max(1, len(t))
+        if digits / float(length) > 0.2:
+            continue
+        # Prefer upper half and center region
+        dy = abs(py - 0.35 * h) / float(h)
+        dx = abs(px - 0.55 * w) / float(w)
+        score = conf + 0.2 * ar - 0.3 * dy - 0.2 * dx + 0.1 * min(1.0, length / 20.0)
+        if score > best_score:
+            best_score = score
+            best_name = ln
+    if best_name is not None:
+        px, py = int(best_name["pos"][0]), int(best_name["pos"][1])
+        bbox = _bbox_around(px, py, wf=0.45, hf=0.10)
+        results["name"] = {
+            "bbox": list(bbox),
+            "confidence": float(best_name.get("confidence", 0.85)),
+            "method": "unknown_payee",
+            "ocr_engine": "arabic",
+            "text": str(best_name.get("text", "")),
+        }
+    return results
+
+
 def locate_fields(
     image_shape: Tuple[int, int],
     bank_id: str,
@@ -36,7 +155,11 @@ def locate_fields(
 
     Returns a mapping: field_name -> { bbox: [x1,y1,x2,y2], confidence: float, method: str }
     """
-    template = load_template(bank_id, template_id)
+    # Load template, or fallback to unknown-template heuristics
+    try:
+        template = load_template(bank_id, template_id)
+    except TemplateNotFoundError:
+        return _locate_unknown(image_shape, ocr_lines)
     results: Dict[str, Dict[str, Any]] = {}
 
     def lines_in_region(region_norm: List[float]) -> List[Dict[str, Any]]:
@@ -148,7 +271,23 @@ def locate_fields(
                     # Exclude pay-to label lines themselves (English/Arabic)
                     if re.search(r"(?i)pay\s+.*this\s+cheque\s+.*order\s+of", t):
                         continue
-                    if re.search(r"شيك.*أمر", t):
+                    # Exclude common labels in QNB and others
+                    if re.search(r"(?i)\bagainst\s+this\s+cheque\b", t):
+                        continue
+                    if re.search(r"(?i)\bpay\s*to\b", t) or re.search(r"(?i)\bpayto\b", t):
+                        continue
+                    # Arabic pay-this-cheque lines often contain these keywords; exclude if present
+                    # Use flexible spacing and optional diacritics/hamza forms
+                    t_ns = re.sub(r"\s+", "", t)
+                    if (
+                        re.search(r"شيك", t) or  # contains 'cheque'
+                        re.search(r"ادفع", t) or  # 'pay'
+                        re.search(r"بموجب", t) or  # 'by virtue of'
+                        re.search(r"هذا", t) or  # 'this'
+                        re.search(r"الشيك", t) or  # 'the cheque'
+                        re.search(r"ل\s*أ\s*مر|لا\s*مر|لٱمر|لآمر", t) or  # 'to the order of' variants
+                        re.search(r"هذا.*الشيك", t_ns)  # compact form
+                    ):
                         continue
                     # If we have 'sum_label' anchor, prefer lines above it by excluding those clearly below
                     sum_anchor = anchors_found.get("sum_label")
@@ -162,6 +301,12 @@ def locate_fields(
                     digit_ratio = digits / float(length)
                     if digit_ratio > 0.3:
                         continue
+                    # Filter out very short tokens which are often stray words (e.g., short Arabic like 'عفلا')
+                    ar_chars = len(re.findall(r"[\u0600-\u06FF]", t))
+                    if ar_chars > 0 and ar_chars < 6:
+                        continue
+                    if ar_chars == 0 and length < 6:
+                        continue
                     # Score by vertical proximity and confidence, slight boost for Arabic text
                     dy = abs(py - ay) / float(h)
                     is_ar = 1.0 if re.search(r"[\u0600-\u06FF]", t) else 0.0
@@ -171,7 +316,8 @@ def locate_fields(
                         kw_boost += 0.2
                     if re.search(r"(?i)\bcompany\b|\bco\.?\b", t):
                         kw_boost += 0.1
-                    score = conf * 1.0 - dy * 0.6 + is_ar * 0.1 + kw_boost
+                    short_penalty = -0.2 if length < 10 else 0.0
+                    score = conf * 1.0 - dy * 0.6 + is_ar * 0.1 + kw_boost + short_penalty
                     # If both anchors exist, penalize distance from the mid x to favor central payee text
                     if x_mid is not None:
                         dx = abs(px - x_mid) / float(w)
@@ -203,6 +349,11 @@ def locate_fields(
         if "pattern" in field and "region_norm" in field and ocr_lines:
             cand_lines = lines_in_region(field["region_norm"])  # type: ignore[arg-type]
             match = best_regex_match(cand_lines, field["pattern"])  # type: ignore[arg-type]
+            # For date field, enforce a strict date pattern; if not matched, skip to alternative strategies
+            if match is not None and name == "date":
+                txtn = _norm_text(str(match.get("text", "")))
+                if not re.search(r"\b\d{1,2}[\/\-][A-Za-z]{3}[\/\-]\d{2,4}\b", txtn):
+                    match = None
             if match is not None:
                 px, py = int(match["pos"][0]), int(match["pos"][1])
                 h, w = image_shape

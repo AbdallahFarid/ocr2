@@ -1,0 +1,123 @@
+{
+  "schema_version": 1,
+  "generated_at": "2025-09-16T13:42:01.494215+00:00",
+  "correlation_id": null,
+  "bank": "QNB",
+  "file": "20250916_134129_b8nits.jpg",
+  "source_csv": null,
+  "decision": {
+    "decision": "review",
+    "stp": false,
+    "overall_conf": 0.8886173211088533,
+    "low_conf_fields": [
+      "cheque_number",
+      "name"
+    ],
+    "reasons": [
+      "low_confidence:cheque_number:0.889<thr0.995",
+      "validation_failed:cheque_number:VALIDATION_FAIL",
+      "low_confidence:name:0.941<thr0.995",
+      "validation_failed:name:VALIDATION_FAIL"
+    ]
+  },
+  "fields": {
+    "bank_name": {
+      "field_conf": 0.9699260526895522,
+      "loc_conf": 0.9999237656593323,
+      "ocr_conf": 1.0,
+      "validation": {
+        "ok": false
+      },
+      "parse_ok": false,
+      "parse_norm": null,
+      "ocr_text": "QNB",
+      "ocr_lang": "en",
+      "meets_threshold": false,
+      "bbox": [
+        79,
+        85,
+        414,
+        139
+      ]
+    },
+    "date": {
+      "field_conf": 0.9993306266487103,
+      "loc_conf": 0.9997429251670837,
+      "ocr_conf": 0.9995875954627991,
+      "validation": {
+        "ok": true
+      },
+      "parse_ok": true,
+      "parse_norm": "2031-12-31",
+      "ocr_text": "31/Dec/2031",
+      "ocr_lang": "en",
+      "meets_threshold": true,
+      "bbox": [
+        1160,
+        100,
+        1495,
+        154
+      ]
+    },
+    "cheque_number": {
+      "field_conf": 0.8886173211088533,
+      "loc_conf": 0.999983549118042,
+      "ocr_conf": 0.8886319398880005,
+      "validation": {
+        "ok": false
+      },
+      "parse_ok": true,
+      "parse_norm": "69177690",
+      "ocr_text": "69177690",
+      "ocr_lang": "en",
+      "meets_threshold": false,
+      "bbox": [
+        1291,
+        67,
+        1676,
+        121
+      ]
+    },
+    "amount_numeric": {
+      "field_conf": 0.9998589803805658,
+      "loc_conf": 0.9999281167984009,
+      "ocr_conf": 0.9999308586120605,
+      "validation": {
+        "ok": true
+      },
+      "parse_ok": true,
+      "parse_norm": "705250.00",
+      "ocr_text": "705,250.00",
+      "ocr_lang": "en",
+      "meets_threshold": true,
+      "bbox": [
+        1362,
+        317,
+        1677,
+        371
+      ]
+    },
+    "name": {
+      "field_conf": 0.9409220285474991,
+      "loc_conf": 0.981977641582489,
+      "ocr_conf": 0.9581908881664276,
+      "validation": {
+        "ok": false
+      },
+      "parse_ok": true,
+      "parse_norm": "tsriF BNOشركة بالم هيلز للتعمير",
+      "ocr_text": "tsriF BNOشركة بالم هيلز للتعمير",
+      "ocr_lang": "ar",
+      "meets_threshold": false,
+      "bbox": [
+        785,
+        181,
+        1539,
+        248
+      ]
+    }
+  },
+  "meta": {
+    "source": "upload"
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "schema_version": 1,
+  "generated_at": "2025-09-16T14:15:56.300996+00:00",
+  "correlation_id": null,
+  "bank": "QNB",
+  "file": "20250916_141556_j9zj5j.jpg",
+  "source_csv": null,
+  "decision": {
+    "decision": "review",
+    "stp": false,
+    "overall_conf": 0.0,
+    "low_conf_fields": [],
+    "reasons": [
+      "processing"
+    ]
+  },
+  "fields": {},
+  "meta": {
+    "source": "upload",
+    "processing": true
+  }
+}

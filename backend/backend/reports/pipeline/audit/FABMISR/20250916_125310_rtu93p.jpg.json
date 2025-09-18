@@ -1,0 +1,126 @@
+{
+  "schema_version": 1,
+  "generated_at": "2025-09-16T12:53:39.615683+00:00",
+  "correlation_id": null,
+  "bank": "FABMISR",
+  "file": "20250916_125310_rtu93p.jpg",
+  "source_csv": null,
+  "decision": {
+    "decision": "review",
+    "stp": false,
+    "overall_conf": 0.8579137802124024,
+    "low_conf_fields": [
+      "date",
+      "cheque_number",
+      "name"
+    ],
+    "reasons": [
+      "low_confidence:date:0.858<thr0.995",
+      "validation_failed:date:VALIDATION_FAIL",
+      "low_confidence:cheque_number:0.946<thr0.995",
+      "validation_failed:cheque_number:VALIDATION_FAIL",
+      "low_confidence:name:0.875<thr0.995",
+      "validation_failed:name:VALIDATION_FAIL"
+    ]
+  },
+  "fields": {
+    "bank_name": {
+      "field_conf": 0.9697379177808761,
+      "loc_conf": 0.9997298121452332,
+      "ocr_conf": 1.0,
+      "validation": {
+        "ok": false
+      },
+      "parse_ok": false,
+      "parse_norm": null,
+      "ocr_text": "FABMISR",
+      "ocr_lang": "en",
+      "meets_threshold": false,
+      "bbox": [
+        1,
+        50,
+        336,
+        104
+      ]
+    },
+    "date": {
+      "field_conf": 0.8579137802124024,
+      "loc_conf": 0.9,
+      "ocr_conf": 0.9532375335693359,
+      "validation": {
+        "ok": false
+      },
+      "parse_ok": true,
+      "parse_norm": "2025-10-31",
+      "ocr_text": "·31/Oct/2025",
+      "ocr_lang": "en",
+      "meets_threshold": false,
+      "bbox": [
+        1176,
+        22,
+        1545,
+        89
+      ]
+    },
+    "cheque_number": {
+      "field_conf": 0.946247674411552,
+      "loc_conf": 0.9869305491447449,
+      "ocr_conf": 0.9587783813476562,
+      "validation": {
+        "ok": false
+      },
+      "parse_ok": true,
+      "parse_norm": "11637504",
+      "ocr_text": "11637504",
+      "ocr_lang": "en",
+      "meets_threshold": false,
+      "bbox": [
+        581,
+        20,
+        1117,
+        74
+      ]
+    },
+    "amount_numeric": {
+      "field_conf": 0.9995075445431141,
+      "loc_conf": 0.9998077750205994,
+      "ocr_conf": 0.9996997117996216,
+      "validation": {
+        "ok": true
+      },
+      "parse_ok": true,
+      "parse_norm": "24920.00",
+      "ocr_text": "24,920.00",
+      "ocr_lang": "en",
+      "meets_threshold": true,
+      "bbox": [
+        1345,
+        259,
+        1677,
+        313
+      ]
+    },
+    "name": {
+      "field_conf": 0.875100768609645,
+      "loc_conf": 0.9477670788764954,
+      "ocr_conf": 0.9233289361000061,
+      "validation": {
+        "ok": false
+      },
+      "parse_ok": true,
+      "parse_norm": "ادفعوا بموجب هذا الشيك الي او لامر",
+      "ocr_text": "ادفعوا بموجب هذا الشيك الي او لامر",
+      "ocr_lang": "ar",
+      "meets_threshold": false,
+      "bbox": [
+        1096,
+        177,
+        1677,
+        244
+      ]
+    }
+  },
+  "meta": {
+    "source": "upload"
+  }
+}

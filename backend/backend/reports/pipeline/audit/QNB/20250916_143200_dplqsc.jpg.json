@@ -1,0 +1,124 @@
+{
+  "schema_version": 1,
+  "generated_at": "2025-09-16T14:39:21.367695+00:00",
+  "correlation_id": null,
+  "bank": "QNB",
+  "file": "20250916_143200_dplqsc.jpg",
+  "source_csv": null,
+  "decision": {
+    "decision": "review",
+    "stp": false,
+    "overall_conf": 0.0,
+    "low_conf_fields": [
+      "date",
+      "name"
+    ],
+    "reasons": [
+      "low_confidence:date:0.000<thr0.995",
+      "validation_failed:date:VALIDATION_FAIL",
+      "low_confidence:name:0.919<thr0.995",
+      "validation_failed:name:VALIDATION_FAIL"
+    ]
+  },
+  "fields": {
+    "bank_name": {
+      "field_conf": 0.9697735905647278,
+      "loc_conf": 0.9997665882110596,
+      "ocr_conf": 1.0,
+      "validation": {
+        "ok": false
+      },
+      "parse_ok": false,
+      "parse_norm": null,
+      "ocr_text": "QNB",
+      "ocr_lang": "en",
+      "meets_threshold": false,
+      "bbox": [
+        107,
+        83,
+        442,
+        137
+      ]
+    },
+    "date": {
+      "field_conf": 0.0,
+      "loc_conf": 0.9980776309967041,
+      "ocr_conf": 0.0,
+      "validation": {
+        "ok": false
+      },
+      "parse_ok": false,
+      "parse_norm": null,
+      "ocr_text": null,
+      "ocr_lang": null,
+      "meets_threshold": false,
+      "bbox": [
+        1181,
+        111,
+        1516,
+        165
+      ]
+    },
+    "cheque_number": {
+      "field_conf": 0.999885979556538,
+      "loc_conf": 0.9999400973320007,
+      "ocr_conf": 0.999945878982544,
+      "validation": {
+        "ok": true
+      },
+      "parse_ok": true,
+      "parse_norm": "63638669",
+      "ocr_text": "63638669",
+      "ocr_lang": "en",
+      "meets_threshold": true,
+      "bbox": [
+        1284,
+        54,
+        1676,
+        108
+      ]
+    },
+    "amount_numeric": {
+      "field_conf": 0.9999107141796912,
+      "loc_conf": 0.9999479055404663,
+      "ocr_conf": 0.9999628067016602,
+      "validation": {
+        "ok": true
+      },
+      "parse_ok": true,
+      "parse_norm": "579313.00",
+      "ocr_text": "579,313.00",
+      "ocr_lang": "en",
+      "meets_threshold": true,
+      "bbox": [
+        1353,
+        323,
+        1677,
+        377
+      ]
+    },
+    "name": {
+      "field_conf": 0.9188610702888127,
+      "loc_conf": 0.9640130996704102,
+      "ocr_conf": 0.953162431716919,
+      "validation": {
+        "ok": false
+      },
+      "parse_ok": true,
+      "parse_norm": "شركة بالم هيلزللتعمير",
+      "ocr_text": "شركة بالم هيلزللتعمير",
+      "ocr_lang": "ar",
+      "meets_threshold": false,
+      "bbox": [
+        809,
+        190,
+        1563,
+        257
+      ]
+    }
+  },
+  "meta": {
+    "source": "upload",
+    "processing": false
+  }
+}

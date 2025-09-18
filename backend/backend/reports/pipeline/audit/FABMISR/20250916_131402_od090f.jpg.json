@@ -1,0 +1,123 @@
+{
+  "schema_version": 1,
+  "generated_at": "2025-09-16T13:14:31.949135+00:00",
+  "correlation_id": null,
+  "bank": "FABMISR",
+  "file": "20250916_131402_od090f.jpg",
+  "source_csv": null,
+  "decision": {
+    "decision": "review",
+    "stp": false,
+    "overall_conf": 0.949049916901668,
+    "low_conf_fields": [
+      "cheque_number",
+      "name"
+    ],
+    "reasons": [
+      "low_confidence:cheque_number:0.964<thr0.995",
+      "validation_failed:cheque_number:VALIDATION_FAIL",
+      "low_confidence:name:0.949<thr0.995",
+      "validation_failed:name:VALIDATION_FAIL"
+    ]
+  },
+  "fields": {
+    "bank_name": {
+      "field_conf": 0.9698115760087966,
+      "loc_conf": 0.999805748462677,
+      "ocr_conf": 1.0,
+      "validation": {
+        "ok": false
+      },
+      "parse_ok": false,
+      "parse_norm": null,
+      "ocr_text": "FABMISR",
+      "ocr_lang": "en",
+      "meets_threshold": false,
+      "bbox": [
+        0,
+        48,
+        335,
+        102
+      ]
+    },
+    "date": {
+      "field_conf": 0.9979952914902555,
+      "loc_conf": 0.999367356300354,
+      "ocr_conf": 0.9986270666122437,
+      "validation": {
+        "ok": true
+      },
+      "parse_ok": true,
+      "parse_norm": "2026-04-30",
+      "ocr_text": "30/Apr/2026",
+      "ocr_lang": "en",
+      "meets_threshold": true,
+      "bbox": [
+        1206,
+        37,
+        1541,
+        91
+      ]
+    },
+    "cheque_number": {
+      "field_conf": 0.9643578655918006,
+      "loc_conf": 0.9830498099327087,
+      "ocr_conf": 0.9809857606887817,
+      "validation": {
+        "ok": false
+      },
+      "parse_ok": true,
+      "parse_norm": "11637510",
+      "ocr_text": "11637510",
+      "ocr_lang": "en",
+      "meets_threshold": false,
+      "bbox": [
+        569,
+        19,
+        1105,
+        73
+      ]
+    },
+    "amount_numeric": {
+      "field_conf": 0.9997108190102608,
+      "loc_conf": 0.9998681545257568,
+      "ocr_conf": 0.999842643737793,
+      "validation": {
+        "ok": true
+      },
+      "parse_ok": true,
+      "parse_norm": "31149.00",
+      "ocr_text": "31,149.00",
+      "ocr_lang": "en",
+      "meets_threshold": true,
+      "bbox": [
+        1341,
+        257,
+        1676,
+        311
+      ]
+    },
+    "name": {
+      "field_conf": 0.949049916901668,
+      "loc_conf": 0.9796764254570007,
+      "ocr_conf": 0.9687381386756897,
+      "validation": {
+        "ok": false
+      },
+      "parse_ok": true,
+      "parse_norm": "شركةبالمهيلز للتحمر",
+      "ocr_text": "شركةبالمهيلز للتحمر",
+      "ocr_lang": "ar",
+      "meets_threshold": false,
+      "bbox": [
+        633,
+        144,
+        1387,
+        211
+      ]
+    }
+  },
+  "meta": {
+    "source": "upload"
+  }
+}

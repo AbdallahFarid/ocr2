@@ -1,0 +1,124 @@
+{
+  "schema_version": 1,
+  "generated_at": "2025-09-16T14:38:32.907590+00:00",
+  "correlation_id": null,
+  "bank": "QNB",
+  "file": "20250916_143159_zulkxi.jpg",
+  "source_csv": null,
+  "decision": {
+    "decision": "review",
+    "stp": false,
+    "overall_conf": 0.8923923261287535,
+    "low_conf_fields": [
+      "date",
+      "name"
+    ],
+    "reasons": [
+      "low_confidence:date:0.892<thr0.995",
+      "validation_failed:date:VALIDATION_FAIL",
+      "low_confidence:name:0.941<thr0.995",
+      "validation_failed:name:VALIDATION_FAIL"
+    ]
+  },
+  "fields": {
+    "bank_name": {
+      "field_conf": 0.9699409693479538,
+      "loc_conf": 0.9999391436576843,
+      "ocr_conf": 1.0,
+      "validation": {
+        "ok": false
+      },
+      "parse_ok": false,
+      "parse_norm": null,
+      "ocr_text": "QNB",
+      "ocr_lang": "en",
+      "meets_threshold": false,
+      "bbox": [
+        106,
+        82,
+        441,
+        136
+      ]
+    },
+    "date": {
+      "field_conf": 0.8923923261287535,
+      "loc_conf": 0.9988555312156677,
+      "ocr_conf": 0.9210461974143982,
+      "validation": {
+        "ok": false
+      },
+      "parse_ok": false,
+      "parse_norm": null,
+      "ocr_text": "…30/1un/2026.",
+      "ocr_lang": "en",
+      "meets_threshold": false,
+      "bbox": [
+        1179,
+        115,
+        1514,
+        169
+      ]
+    },
+    "cheque_number": {
+      "field_conf": 0.9999589922368699,
+      "loc_conf": 0.9999932050704956,
+      "ocr_conf": 0.9999657869338989,
+      "validation": {
+        "ok": true
+      },
+      "parse_ok": true,
+      "parse_norm": "63638663",
+      "ocr_text": "63638663",
+      "ocr_lang": "en",
+      "meets_threshold": true,
+      "bbox": [
+        1284,
+        55,
+        1676,
+        109
+      ]
+    },
+    "amount_numeric": {
+      "field_conf": 0.9999105950204914,
+      "loc_conf": 0.9999585747718811,
+      "ocr_conf": 0.9999520182609558,
+      "validation": {
+        "ok": true
+      },
+      "parse_ok": true,
+      "parse_norm": "21116.00",
+      "ocr_text": "21,116.00",
+      "ocr_lang": "en",
+      "meets_threshold": true,
+      "bbox": [
+        1365,
+        326,
+        1677,
+        380
+      ]
+    },
+    "name": {
+      "field_conf": 0.9408974336904734,
+      "loc_conf": 0.9666181802749634,
+      "ocr_conf": 0.9733909964561462,
+      "validation": {
+        "ok": false
+      },
+      "parse_ok": true,
+      "parse_norm": "شركة بالم هيلز للتعمير",
+      "ocr_text": "شركة بالم هيلز للتعمير",
+      "ocr_lang": "ar",
+      "meets_threshold": false,
+      "bbox": [
+        811,
+        192,
+        1565,
+        259
+      ]
+    }
+  },
+  "meta": {
+    "source": "upload",
+    "processing": false
+  }
+}
