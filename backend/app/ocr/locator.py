@@ -282,11 +282,13 @@ def locate_fields(
                     if (
                         re.search(r"شيك", t) or  # contains 'cheque'
                         re.search(r"ادفع", t) or  # 'pay'
+                        re.search(r"دفع", t) or   # 'pay' inflected forms
                         re.search(r"بموجب", t) or  # 'by virtue of'
                         re.search(r"هذا", t) or  # 'this'
                         re.search(r"الشيك", t) or  # 'the cheque'
                         re.search(r"ل\s*أ\s*مر|لا\s*مر|لٱمر|لآمر", t) or  # 'to the order of' variants
-                        re.search(r"هذا.*الشيك", t_ns)  # compact form
+                        re.search(r"هذا.*الشيك", t_ns) or  # compact form
+                        re.search(r"\bالى\b|\bالي\b", t)  # 'to' variants
                     ):
                         continue
                     # If we have 'sum_label' anchor, prefer lines above it by excluding those clearly below
@@ -345,7 +347,83 @@ def locate_fields(
                     }
                     continue
 
-        # 2) Pattern + region search
+        # 2) Anchor-refined cheque number using 'cheque_label' and 'cheque_label_ar': (skip for BANQUE_MISR/CIB/AAIB to use fixed ROI position)
+        if bank_id not in ("BANQUE_MISR", "CIB", "AAIB") and name == "cheque_number" and ocr_lines and ("cheque_label" in anchors_found or "cheque_label_ar" in anchors_found):
+            region_norm: List[float]
+            en = anchors_found.get("cheque_label")
+            ar = anchors_found.get("cheque_label_ar")
+            if en is not None and ar is not None:
+                ex, ey = int(en["pos"][0]), int(en["pos"][1])
+                ax, ay = int(ar["pos"][0]), int(ar["pos"][1])
+                x_left, x_right = (ex, ax) if ex < ax else (ax, ex)
+                yc = int((ey + ay) / 2)
+                y1 = max(0, yc - int(0.06 * h))
+                # Band strictly in upper half
+                y1 = min(y1, int(0.40 * h))
+                # Narrow horizontal band between labels with small margins
+                x_l = max(0, x_left + int(0.02 * w))
+                x_r = min(w, x_right - int(0.02 * w))
+                region_norm = [x_l / w, y1 / h, max(0.0, (x_r - x_l) / w), 0.14]
+            elif en is not None:
+                px, py = int(en["pos"][0]), int(en["pos"][1])
+                region_norm = [min(1.0, px / w), max(0.0, (py - 0.06 * h) / h), min(0.45, 1.0 - px / w), 0.14]
+            else:  # only Arabic label is found; search to its LEFT
+                px, py = int(ar["pos"][0]), int(ar["pos"][1])  # type: ignore[index]
+                region_norm = [0.0, max(0.0, (py - 0.06 * h) / h), min(0.48, px / w), 0.14]
+            cand_lines = lines_in_region(region_norm)
+            # Score candidates: must contain 10-13 digit token; prefer 12 digits; reject lines with letters/punct; prefer high digit ratio
+            best = None
+            best_score = -1e9
+            for ln in cand_lines:
+                t = _norm_text(str(ln.get("text", "")))
+                # Reject if any Latin letters or obvious punctuation typical to MICR-like noise
+                if re.search(r"[A-Za-z]", t) or re.search(r"[\:\"A-Z]", t):
+                    continue
+                # Require at least one 10-13 digit group; prefer 12 digits for BANQUE_MISR
+                groups = re.findall(r"\d{10,13}", t)
+                if not groups:
+                    # try generic 6+ as last resort
+                    groups = re.findall(r"\d{6,}", t)
+                if not groups:
+                    continue
+                digit_count = sum(ch.isdigit() for ch in t)
+                non_space = len(re.sub(r"\s+", "", t)) or 1
+                digit_ratio = digit_count / float(non_space)
+                # Base score
+                score = float(ln.get("confidence", 0.5))
+                # Prefer high digit ratio
+                score += 0.5 * max(0.0, digit_ratio - 0.6)
+                # Prefer 12-digit near the leftmost group
+                lens = [len(g) for g in groups]
+                best_len_bias = min(abs(L - 12) for L in lens)
+                score -= 0.3 * best_len_bias
+                if score > best_score:
+                    best_score = score
+                    best = ln
+            match = best
+            if match is not None:
+                my = int(match["pos"][1])
+                if my <= int(0.55 * h):
+                    mx, my = int(match["pos"][0]), int(match["pos"][1])
+                    bw, bh = int(0.20 * w), int(0.08 * h)
+                    x1 = max(0, mx - bw // 2)
+                    y1 = max(0, my - bh // 2)
+                    x2 = min(w, x1 + bw)
+                    y2 = min(h, y1 + bh)
+                    bbox = (x1, y1, x2, y2)
+                    method = "anchor_cheque_band"
+                    confidence = float(match.get("confidence", 0.85))
+                    results[name] = {
+                        "bbox": list(bbox),
+                        "confidence": confidence,
+                        "method": method,
+                        "ocr_engine": engine,
+                        "text": str(match.get("text", "")),
+                        "anchor": "cheque_labels",
+                    }
+                    continue
+
+        # 3) Pattern + region search
         if "pattern" in field and "region_norm" in field and ocr_lines:
             cand_lines = lines_in_region(field["region_norm"])  # type: ignore[arg-type]
             match = best_regex_match(cand_lines, field["pattern"])  # type: ignore[arg-type]
@@ -375,7 +453,7 @@ def locate_fields(
                 }
                 continue
 
-        # 3) Anchor-refined date and amount if labels found but pattern region fails
+        # 4) Anchor-refined date and amount if labels found but pattern region fails
         if name == "date" and "roi_norm" in field and "date_label" in anchors_found and ocr_lines:
             lab = anchors_found["date_label"]
             px, py = int(lab["pos"][0]), int(lab["pos"][1])
@@ -427,7 +505,7 @@ def locate_fields(
                 }
                 continue
 
-        # 4) Fallback to static ROI if present
+        # 5) Fallback to static ROI if present
         if "roi_norm" in field:
             roi_norm = tuple(field["roi_norm"])  # [x,y,w,h]
             bbox = norm_rect_to_pixels(image_shape, roi_norm)

@@ -7,6 +7,7 @@ from typing import List
 class BankLabel(str, Enum):
     QNB = "QNB"
     FABMISR = "FABMISR"
+    BANQUE_MISR = "BANQUE_MISR"
     UNKNOWN = "UNKNOWN"
 
 

@@ -154,27 +154,53 @@ class PaddleOCREngine:
         """
         if lang == "en":
             if self._ocr_en is None:
-                # Newer versions of PaddleOCR support `use_textline_orientation`
+                # Prefer PP-OCRv5 pipeline (mobile variants on CPU) and disable optional submodules per docs
+                # Fallback gradually for older PaddleOCR versions
                 try:
-                    self._ocr_en = PaddleOCR(lang="en", use_textline_orientation=not self.use_angle_cls)
-                except Exception:
-                    self._ocr_en = PaddleOCR(lang="en", use_angle_cls=self.use_angle_cls)
-            return self._ocr_en
-        elif lang == "ar":
-            if self._ocr_ar is None:
-                # Try enabling explicit space recognition for Arabic if supported
-                try:
-                    self._ocr_ar = PaddleOCR(
-                        lang="ar",
-                        use_textline_orientation=not self.use_angle_cls,
-                        use_space_char=True,
+                    self._ocr_en = PaddleOCR(
+                        # Pipeline version and model choices
+                        ocr_version="PP-OCRv5",
+                        text_detection_model_name="PP-OCRv5_server_det",
+                        text_recognition_model_name="PP-OCRv5_server_rec",
+                        # Disable optional modules for stability/perf
+                        use_doc_orientation_classify=False,
+                        use_doc_unwarping=False,
+                        use_textline_orientation=False,
+                        # Language and runtime params
+                        lang="en",
+                        enable_mkldnn=True,
+                        cpu_threads=8,
+                        show_log=False,
                     )
                 except Exception:
                     try:
-                        # Older PaddleOCR versions may not support use_textline_orientation or use_space_char
-                        self._ocr_ar = PaddleOCR(lang="ar", use_angle_cls=self.use_angle_cls, use_space_char=True)
+                        # Older PaddleOCR may not accept v5 names; fall back to lang-only with orientation flag
+                        self._ocr_en = PaddleOCR(lang="en", use_textline_orientation=not self.use_angle_cls)
                     except Exception:
-                        # Fallback with no space flag support
+                        self._ocr_en = PaddleOCR(lang="en", use_angle_cls=self.use_angle_cls)
+            return self._ocr_en
+        elif lang == "ar":
+            if self._ocr_ar is None:
+                # Prefer PP-OCRv5 detection with Arabic v3 recognizer; disable optional modules
+                try:
+                    self._ocr_ar = PaddleOCR(
+                        ocr_version="PP-OCRv5",
+                        text_detection_model_name="PP-OCRv5_server_det",
+                        text_recognition_model_name="arabic_PP-OCRv3_mobile_rec",
+                        use_doc_orientation_classify=False,
+                        use_doc_unwarping=False,
+                        use_textline_orientation=False,
+                        lang="ar",
+                        enable_mkldnn=True,
+                        cpu_threads=8,
+                        use_space_char=True,
+                        show_log=False,
+                    )
+                except Exception:
+                    try:
+                        # Older PaddleOCR versions may not support above params; progressively degrade
+                        self._ocr_ar = PaddleOCR(lang="ar", use_textline_orientation=not self.use_angle_cls, use_space_char=True)
+                    except Exception:
                         try:
                             self._ocr_ar = PaddleOCR(lang="ar", use_textline_orientation=not self.use_angle_cls)
                         except Exception:

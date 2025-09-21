@@ -5,6 +5,9 @@ import { uploadCheque } from '../../utils/api'
 const banks = [
   { id: 'QNB', label: 'QNB' },
   { id: 'FABMISR', label: 'FABMISR' },
+  { id: 'BANQUE_MISR', label: 'BANQUE MISR' },
+  { id: 'CIB', label: 'CIB' },
+  { id: 'AAIB', label: 'AAIB' },
 ] as const
 
 type BankId = (typeof banks)[number]['id']

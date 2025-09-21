@@ -86,13 +86,13 @@ def get_upload_root() -> Path:
 @router.post("/upload")
 async def upload_cheque(
     request: Request,
-    bank: str = Form(..., description="Bank code, e.g. QNB or FABMISR"),
+    bank: str = Form(..., description="Bank code, e.g. QNB, FABMISR, BANQUE_MISR, CIB, or AAIB"),
     file: UploadFile = File(...),
     correlation_id: str | None = Form(None),
 ) -> Dict[str, Any]:
     bank = bank.strip().upper()
-    if bank not in {"QNB", "FABMISR"}:
-        raise HTTPException(status_code=400, detail="Unsupported bank. Use QNB or FABMISR.")
+    if bank not in {"QNB", "FABMISR", "BANQUE_MISR", "CIB", "AAIB"}:
+        raise HTTPException(status_code=400, detail="Unsupported bank. Use QNB, FABMISR, BANQUE_MISR, CIB, or AAIB.")
 
     # Validate content type and size (read into memory; adjust for large files if needed)
     allowed_ct = {"image/jpeg", "image/jpg", "image/png", "image/tiff"}

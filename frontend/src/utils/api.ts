@@ -140,7 +140,7 @@ export async function submitCorrections(
 }
 
 export async function uploadCheque(
-  bank: 'QNB' | 'FABMISR',
+  bank: 'QNB' | 'FABMISR' | 'BANQUE_MISR' | 'CIB' | 'AAIB',
   file: File,
   correlationId?: string
 ): Promise<{
