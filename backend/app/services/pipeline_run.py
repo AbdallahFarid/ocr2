@@ -16,13 +16,16 @@ from app.validations.confidence import compute_field_confidence, passes_global_t
 from app.ocr.locator import locate_fields
 from app.ocr.text_utils import fix_arabic_text
 
-AMOUNT_RX = re.compile(r"\b\d{1,3}(?:,\d{3})*(?:\.\d{2})?\b")
-AMOUNT_DEC_RX = re.compile(r"\b\d{1,3}(?:,\d{3})*\.\d{2}\b")
+AMOUNT_RX = re.compile(r"\b\d{1,3}(?:[\.,]\d{3})*(?:[\.,]\d{2})?\b")
+AMOUNT_DEC_RX = re.compile(r"\b\d{1,3}(?:[\.,]\d{3})*[\.,]\d{2}\b")
 # Accept dates like 30/Apr/2030, 30-Apr-2030, allow missing separators and extra punctuation,
-# and tolerate trailing -1 or .1 from OCR noise. No leading word boundary required.
-DATE_RX = re.compile(r"(?i)(?<!\d)\d{1,2}\s*[\/\-\.]?\s*[A-Za-z]{3}\s*[\/\-\.]?\s*\d{2,4}(?:[-\.]\d{1,2})?(?!\d)")
+# tolerate '0ct'/'0ec' OCR variants for Oct/Dec, and tolerate trailing -1 or .1 from OCR noise.
+# No leading word boundary required.
+DATE_RX = re.compile(r"(?i)(?<!\d)\d{1,2}\s*[\/\-\.]?\s*(?:0ct|0ec|[A-Za-z]{3})\s*[\/\-\.]?\s*\d{2,4}(?:[-\.]\d{1,2})?(?!\d)")
 NUM_RX = re.compile(r"\b\d{6,}\b")
 LABEL_NO_RX = re.compile(r"\b[nN][oO0]\b")
+# Global toggle: mute 'name' field and skip Arabic OCR for performance
+MUTE_NAME = os.getenv("MUTE_NAME", "1") == "1"
 
 
 def _load_image(path: str) -> np.ndarray:
@@ -34,7 +37,7 @@ def _load_image(path: str) -> np.ndarray:
     return img
 
 
-def _maybe_downscale(img: np.ndarray, *, max_width: int = 1800) -> np.ndarray:
+def _maybe_downscale(img: np.ndarray, *, max_width: int = 1400) -> np.ndarray:
     """Downscale very large cheques to speed up OCR and avoid engine stalls.
 
     Preserves aspect ratio. Uses INTER_AREA for quality downscaling.
@@ -68,7 +71,8 @@ def _get_engine() -> PaddleOCREngine:
         try:
             dummy = np.full((32, 32, 3), 255, dtype=np.uint8)
             _ENGINE_SINGLETON.ocr_image(dummy, languages=["en"], min_confidence=0.9)
-            _ENGINE_SINGLETON.ocr_image(dummy, languages=["ar"], min_confidence=0.9)
+            if not MUTE_NAME:
+                _ENGINE_SINGLETON.ocr_image(dummy, languages=["ar"], min_confidence=0.9)
             _ENGINE_WARMED = True
         except Exception:
             # Ignore warmup failures; real call will try again
@@ -156,9 +160,12 @@ def _select_best_text(field: str, lines: List[Any]) -> Tuple[str, float, str]:
 
 
 def _best_text_from_roi(engine: PaddleOCREngine, img: np.ndarray, bbox: Tuple[int, int, int, int], field: str, min_conf: float) -> Tuple[str, float, str]:
-    langs = ["ar"] if field == "name" else ["en"]
+    if field == "name" and MUTE_NAME:
+        # Skip OCR entirely for name to speed up processing
+        return "", 0.0, ""
+    langs = ["ar"] if (field == "name" and not MUTE_NAME) else ["en"]
     h, w = img.shape[:2]
-    lines = engine.ocr_roi(img, roi=bbox, languages=langs, min_confidence=min_conf, padding=6, n_votes=3)
+    lines = engine.ocr_roi(img, roi=bbox, languages=langs, min_confidence=min_conf, padding=6, n_votes=2)
     if not lines:
         return "", 0.0, ""
     # Special handling for Arabic names: merge multiple fragments with stable RTL ordering
@@ -273,7 +280,7 @@ def _best_text_from_roi(engine: PaddleOCREngine, img: np.ndarray, bbox: Tuple[in
             min(w - 1, bx2 + exp),
             min(h - 1, by2 + int(0.04 * h)),
         )
-        lines2 = engine.ocr_roi(img, roi=nb, languages=langs, min_confidence=min_conf, padding=6, n_votes=3)
+        lines2 = engine.ocr_roi(img, roi=nb, languages=langs, min_confidence=min_conf, padding=6, n_votes=2)
         if lines2:
             t2, c2, l2 = _select_best_text(field, lines2)
             if DATE_RX.search(t2 or "") and c2 >= conf:
@@ -282,7 +289,7 @@ def _best_text_from_roi(engine: PaddleOCREngine, img: np.ndarray, bbox: Tuple[in
         bx1, by1, bx2, by2 = bbox
         exp = int(0.06 * w)
         nb = (bx1, by1, min(w - 1, bx2 + exp), by2)
-        lines2 = engine.ocr_roi(img, roi=nb, languages=langs, min_confidence=min_conf, padding=6, n_votes=3)
+        lines2 = engine.ocr_roi(img, roi=nb, languages=langs, min_confidence=min_conf, padding=6, n_votes=2)
         if lines2:
             t2, c2, l2 = _select_best_text(field, lines2)
             if AMOUNT_DEC_RX.search(t2 or "") and c2 >= conf:
@@ -300,7 +307,7 @@ def run_pipeline_on_image(image_path: str, bank: str, template_id: str = "auto",
     Returns mapping field -> record compatible with audit JSON expected by UI.
     """
     if langs is None:
-        langs = ["en", "ar"]
+        langs = ["en"] if MUTE_NAME else ["en", "ar"]
     img = _load_image(image_path)
     img = _maybe_downscale(img)
     h, w_img = img.shape[:2]
@@ -308,10 +315,15 @@ def run_pipeline_on_image(image_path: str, bank: str, template_id: str = "auto",
     # Precompute some global OCR lines
     full_lines_en = engine.ocr_image(img, languages=["en"], min_confidence=min_conf)
     no_lines = [l for l in full_lines_en if LABEL_NO_RX.search(str(l.text))]
-    full_lines = engine.ocr_image(img, languages=langs, min_confidence=min_conf)
+    # Avoid redundant second full-image OCR when Arabic is muted
+    if MUTE_NAME and set(langs) == {"en"}:
+        full_lines = full_lines_en
+    else:
+        full_lines = engine.ocr_image(img, languages=langs, min_confidence=min_conf)
     # Persist raw OCR lines for debugging/inspection
     try:
-        _write_raw_ocr_lines(bank, image_path, full_lines)
+        if os.getenv("WRITE_OCR_LINES", "0") == "1":
+            _write_raw_ocr_lines(bank, image_path, full_lines)
     except Exception:
         pass
     loc_lines = _ocr_lines_for_locator(full_lines)
@@ -345,6 +357,60 @@ def run_pipeline_on_image(image_path: str, bank: str, template_id: str = "auto",
         else:
             text, ocr_conf, ocr_lang = _best_text_from_roi(engine, img, bbox, field, min_conf)
         selected_src: Optional[str] = None
+        # NBE: Cheque number fallback — preselect 14-digit token near 'CHEQUE' on full image
+        if field == "cheque_number" and bank.upper() == "NBE":
+            try:
+                # Find English 'CHEQUE' near the top
+                label_lines = [l for l in full_lines_en if re.search(r"(?i)\bcheque\b", str(l.text))]
+                best_tok = None
+                best_s = -1e9
+                if label_lines:
+                    # Build a horizontal band to the right of the leftmost CHEQUE
+                    lx = min(float(getattr(l, "center", (0.0, 0.0))[0]) for l in label_lines)
+                    ly = min(float(getattr(l, "center", (0.0, 0.0))[1]) for l in label_lines)
+                    x_l = lx
+                    x_r = min(float(w_img), lx + 0.55 * w_img)
+                    y_pref = 0.60 * h
+                    cx_band = 0.5 * (x_l + x_r)
+                    for l in full_lines_en:
+                        cx = float(getattr(l, "center", (0.0, 0.0))[0])
+                        cy = float(getattr(l, "center", (0.0, 0.0))[1])
+                        if not (x_l <= cx <= x_r):
+                            continue
+                        s = str(l.text)
+                        if re.search(r"[A-Za-z]", s):
+                            continue
+                        m = re.search(r"(?<!\d)\d{14}(?!\d)", s)
+                        if not m:
+                            continue
+                        tok = m.group(0)
+                        c = float(getattr(l, "confidence", 0.0))
+                        dist = abs(cx - cx_band) / max(1.0, 0.5 * (x_r - x_l))
+                        vdist = abs(cy - y_pref) / max(1.0, 0.25 * h)
+                        s_score = c - 0.3 * dist - 0.2 * vdist
+                        if s_score > best_s:
+                            best_s = s_score
+                            best_tok = (tok, l)
+                if best_tok is not None:
+                    text = best_tok[0]
+                    ocr_conf = max(float(ocr_conf), float(getattr(best_tok[1], "confidence", 0.0)))
+                    ocr_lang = "en"
+                    selected_src = "nbe_preselect_cheque"
+                    # Override bbox to the selected line
+                    try:
+                        pts = getattr(best_tok[1], "bbox", None)
+                        if pts:
+                            xs = [int(p[0]) for p in pts]
+                            ys = [int(p[1]) for p in pts]
+                            bx1 = max(0, min(xs) - int(0.02 * w_img))
+                            by1 = max(0, min(ys) - int(0.02 * h))
+                            bx2 = min(w_img - 1, max(xs) + int(0.02 * w_img))
+                            by2 = min(h - 1, max(ys) + int(0.02 * h))
+                            bbox = (bx1, by1, bx2, by2)
+                    except Exception:
+                        pass
+            except Exception:
+                pass
         # AAIB: Re-scan ROI to extract exact 9–10 digit cheque number; fallback to top-left band near 'Cheque No.'
         if field == "cheque_number" and bank.upper() == "AAIB":
             try:
@@ -535,6 +601,216 @@ def run_pipeline_on_image(image_path: str, bank: str, template_id: str = "auto",
                             selected_src = selected_src or "aaib_date_global"
                     except Exception:
                         pass
+            except Exception:
+                pass
+
+        # NBE: Date fallback — similar strategy, tolerant to '0ct'/'0ec'
+        if field == "date" and bank.upper() == "NBE" and not DATE_RX.search(str(text or "")):
+            try:
+                # 1) ROI rescan
+                roi_lines = engine.ocr_roi(img, roi=bbox, languages=["en"], min_confidence=min_conf, padding=8, n_votes=5)
+                best = None
+                best_c = -1.0
+                for l in roi_lines or []:
+                    s = str(l.text)
+                    m = DATE_RX.search(s)
+                    if not m:
+                        continue
+                    c = float(getattr(l, "confidence", 0.0))
+                    if c > best_c:
+                        best_c = c
+                        best = (m.group(0), l)
+                if best is not None:
+                    text = best[0]
+                    ocr_conf = max(float(ocr_conf), float(getattr(best[1], "confidence", 0.0)))
+                    ocr_lang = "en"
+                    selected_src = selected_src or "nbe_date_roi"
+                # 2) Label-guided: pick date to the right of 'DATE'
+                if not DATE_RX.search(str(text or "")):
+                    labels = [l for l in full_lines_en if re.search(r"(?i)\bdate\b", str(l.text))]
+                    best = None
+                    best_s = -1e9
+                    for lab in labels:
+                        ly = float(getattr(lab, "center", (0.0, 0.0))[1])
+                        lx = float(getattr(lab, "center", (0.0, 0.0))[0])
+                        for l in full_lines:
+                            s = str(l.text)
+                            m = DATE_RX.search(s)
+                            if not m:
+                                continue
+                            cy = float(getattr(l, "center", (0.0, 0.0))[1])
+                            cx = float(getattr(l, "center", (0.0, 0.0))[0])
+                            if abs(cy - ly) <= 0.06 * h and cx >= lx:
+                                c = float(getattr(l, "confidence", 0.0))
+                                sc = c - 0.12 * abs(cx - lx) / max(1.0, 0.5 * w_img)
+                                if sc > best_s:
+                                    best_s = sc
+                                    best = (m.group(0), l)
+                    if best is not None:
+                        text = best[0]
+                        ocr_conf = max(float(ocr_conf), float(getattr(best[1], "confidence", 0.0)))
+                        ocr_lang = "en"
+                        selected_src = selected_src or "nbe_date_label"
+                # 3) Global: any date
+                if not DATE_RX.search(str(text or "")):
+                    best = None
+                    best_c = -1.0
+                    for l in full_lines:
+                        s = str(l.text)
+                        m = DATE_RX.search(s)
+                        if not m:
+                            continue
+                        c = float(getattr(l, "confidence", 0.0))
+                        if c > best_c:
+                            best_c = c
+                            best = (m.group(0), l)
+                    if best is not None:
+                        text = best[0]
+                        ocr_conf = max(float(ocr_conf), float(getattr(best[1], "confidence", 0.0)))
+                        ocr_lang = "en"
+                        selected_src = selected_src or "nbe_date_global"
+            except Exception:
+                pass
+
+        # NBE: Amount strictness — require decimals to avoid picking day-of-month as amount
+        if field == "amount_numeric" and bank.upper() == "NBE":
+            if not AMOUNT_DEC_RX.search(str(text or "")):
+                # Try ROI rescan once more with wider right expansion
+                try:
+                    bx1, by1, bx2, by2 = bbox
+                    nb = (bx1, by1, min(w_img - 1, bx2 + int(0.10 * w_img)), by2)
+                    lines2 = engine.ocr_roi(img, roi=nb, languages=["en"], min_confidence=min_conf, padding=8, n_votes=2)
+                    cand = [(str(l.text), float(getattr(l, "confidence", 0.0))) for l in (lines2 or []) if AMOUNT_DEC_RX.search(str(l.text))]
+                    if cand:
+                        best_t, best_c = max(cand, key=lambda t: t[1])
+                        text = best_t
+                        ocr_conf = max(float(ocr_conf), best_c)
+                        ocr_lang = "en"
+                        selected_src = selected_src or "nbe_amount_dec_roi"
+                except Exception:
+                    pass
+                # 2) If still missing, search a right-side band on full image for any decimal amount
+                if not AMOUNT_DEC_RX.search(str(text or "")):
+                    try:
+                        best = None
+                        best_s = -1e9
+                        for l in full_lines_en:
+                            cx = float(getattr(l, "center", (0.0, 0.0))[0])
+                            cy = float(getattr(l, "center", (0.0, 0.0))[1])
+                            # Prefer right third and mid-height rows (typical amount box)
+                            if cx < 0.62 * w_img or cy < 0.22 * h or cy > 0.60 * h:
+                                continue
+                            s = str(l.text)
+                            m = AMOUNT_DEC_RX.search(s)
+                            if not m:
+                                continue
+                            c = float(getattr(l, "confidence", 0.0))
+                            # Score: confidence + proximity to right edge and to vertical band center
+                            right_pref = (cx - 0.62 * w_img) / max(1.0, 0.38 * w_img)
+                            vcenter = 1.0 - abs(cy - 0.40 * h) / max(1.0, 0.20 * h)
+                            sc = c + 0.2 * right_pref + 0.1 * vcenter
+                            if sc > best_s:
+                                best_s = sc
+                                best = (m.group(0), l)
+                        if best is not None:
+                            text = best[0]
+                            ocr_conf = max(float(ocr_conf), float(getattr(best[1], "confidence", 0.0)))
+                            ocr_lang = "en"
+                            selected_src = selected_src or "nbe_amount_dec_band"
+                            # tighten bbox around detected amount for potential downstream use
+                            try:
+                                pts = getattr(best[1], "bbox", None)
+                                if pts:
+                                    xs = [int(p[0]) for p in pts]
+                                    ys = [int(p[1]) for p in pts]
+                                    bx1 = max(0, min(xs) - int(0.02 * w_img))
+                                    by1 = max(0, min(ys) - int(0.02 * h))
+                                    bx2 = min(w_img - 1, max(xs) + int(0.02 * w_img))
+                                    by2 = min(h - 1, max(ys) + int(0.02 * h))
+                                    bbox = (bx1, by1, bx2, by2)
+                            except Exception:
+                                pass
+                    except Exception:
+                        pass
+                # If still no decimals, clear the field to avoid false amount
+                if not AMOUNT_DEC_RX.search(str(text or "")):
+                    text = ""
+                    ocr_conf = 0.0
+                    ocr_lang = ""
+
+        # NBE: Name fallback — prefer Arabic-only candidate within expanded ROI, then Arabic label-anchored scan on full image
+        if field == "name" and bank.upper() == "NBE":
+            try:
+                cur = str(text or "")
+                def _noisy_nbe(s: str) -> bool:
+                    return len(s.strip()) < 3 or bool(re.search(r"[A-Za-z]", s)) or (sum(ch.isdigit() for ch in s) / max(1, len(s)) > 0.2)
+                if _noisy_nbe(cur) or re.search(r"فرع", cur):
+                    bx1e = max(0, bbox[0] - int(0.02 * w_img))
+                    by1e = max(0, bbox[1] - int(0.02 * h))
+                    bx2e = min(w_img - 1, bbox[2] + int(0.02 * w_img))
+                    by2e = min(h - 1, bbox[3] + int(0.02 * h))
+                    best = None
+                    best_c = -1.0
+                    for l in full_lines:
+                        cx = float(getattr(l, "center", (0.0, 0.0))[0])
+                        cy = float(getattr(l, "center", (0.0, 0.0))[1])
+                        if not (bx1e <= cx <= bx2e and by1e <= cy <= by2e):
+                            continue
+                        s = str(getattr(l, "text", ""))
+                        if re.search(r"[A-Za-z\d]", s):
+                            continue
+                        if re.search(r"فرع", s):
+                            continue
+                        c = float(getattr(l, "confidence", 0.0))
+                        if c > best_c:
+                            best_c = c
+                            best = (s, l)
+                    if best is not None:
+                        clean = best[0]
+                        clean = re.sub(r"(?i)\bname\b", "", clean)
+                        clean = re.sub(r"بحاسلا\s*مس", "", clean)
+                        clean = re.sub(r"فرع\s*\S+", "", clean)
+                        clean = re.sub(r"\s+", " ", clean).strip()
+                        if clean:
+                            text = clean
+                            ocr_conf = max(float(ocr_conf), float(getattr(best[1], "confidence", 0.0)))
+                            ocr_lang = "ar"
+                            selected_src = selected_src or "nbe_name_roi"
+            except Exception:
+                pass
+            # If still missing/too short, try Arabic label-anchored fallback on full image
+            try:
+                cur = str(text or "")
+                if len(cur.strip()) < 3:
+                    labels = [l for l in full_lines if re.search(r"(ادفعوا\s*لأمر|اسم\s*الحساب|بحاسلا\s*مس)", str(l.text))]
+                    best = None
+                    best_s = -1e9
+                    for lab in labels:
+                        ly = float(getattr(lab, "center", (0.0, 0.0))[1])
+                        lx = float(getattr(lab, "center", (0.0, 0.0))[0])
+                        for l in full_lines:
+                            s = str(getattr(l, "text", ""))
+                            if re.search(r"[A-Za-z\d]", s) or re.search(r"فرع", s):
+                                continue
+                            cy = float(getattr(l, "center", (0.0, 0.0))[1])
+                            cx = float(getattr(l, "center", (0.0, 0.0))[0])
+                            if abs(cy - ly) <= 0.06 * h and cx >= lx:
+                                c = float(getattr(l, "confidence", 0.0))
+                                sc = c - 0.10 * abs(cx - lx) / max(1.0, 0.5 * w_img)
+                                if sc > best_s:
+                                    best_s = sc
+                                    best = (s, l)
+                    if best is not None:
+                        clean = best[0]
+                        clean = re.sub(r"(?i)\bname\b", "", clean)
+                        clean = re.sub(r"بحاسلا\s*مس", "", clean)
+                        clean = re.sub(r"فرع\s*\S+", "", clean)
+                        clean = re.sub(r"\s+", " ", clean).strip()
+                        if clean:
+                            text = clean
+                            ocr_conf = max(float(ocr_conf), float(getattr(best[1], "confidence", 0.0)))
+                            ocr_lang = "ar"
+                            selected_src = selected_src or "nbe_name_label"
             except Exception:
                 pass
 

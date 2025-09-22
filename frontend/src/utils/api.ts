@@ -83,7 +83,7 @@ export async function exportItems(
   return res.blob()
 }
 
-let backendBase: string | undefined = (import.meta as any).env?.VITE_BACKEND_BASE
+let backendBase: string | undefined = (import.meta as any).env?.VITE_BACKEND_BASE || 'http://127.0.0.1:8000'
 
 export function setBackendBase(url?: string) {
   backendBase = url
@@ -140,7 +140,7 @@ export async function submitCorrections(
 }
 
 export async function uploadCheque(
-  bank: 'QNB' | 'FABMISR' | 'BANQUE_MISR' | 'CIB' | 'AAIB',
+  bank: 'QNB' | 'FABMISR' | 'BANQUE_MISR' | 'CIB' | 'AAIB' | 'NBE',
   file: File,
   correlationId?: string
 ): Promise<{

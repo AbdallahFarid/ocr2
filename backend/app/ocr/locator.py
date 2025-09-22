@@ -371,7 +371,7 @@ def locate_fields(
                 px, py = int(ar["pos"][0]), int(ar["pos"][1])  # type: ignore[index]
                 region_norm = [0.0, max(0.0, (py - 0.06 * h) / h), min(0.48, px / w), 0.14]
             cand_lines = lines_in_region(region_norm)
-            # Score candidates: must contain 10-13 digit token; prefer 12 digits; reject lines with letters/punct; prefer high digit ratio
+            # Score candidates: must contain 10-16 digit token; prefer 14 for NBE, 12 otherwise; reject lines with letters/punct; prefer high digit ratio
             best = None
             best_score = -1e9
             for ln in cand_lines:
@@ -379,8 +379,8 @@ def locate_fields(
                 # Reject if any Latin letters or obvious punctuation typical to MICR-like noise
                 if re.search(r"[A-Za-z]", t) or re.search(r"[\:\"A-Z]", t):
                     continue
-                # Require at least one 10-13 digit group; prefer 12 digits for BANQUE_MISR
-                groups = re.findall(r"\d{10,13}", t)
+                # Require at least one 10-16 digit group; prefer 14 for NBE, 12 otherwise
+                groups = re.findall(r"\d{10,16}", t)
                 if not groups:
                     # try generic 6+ as last resort
                     groups = re.findall(r"\d{6,}", t)
@@ -393,9 +393,10 @@ def locate_fields(
                 score = float(ln.get("confidence", 0.5))
                 # Prefer high digit ratio
                 score += 0.5 * max(0.0, digit_ratio - 0.6)
-                # Prefer 12-digit near the leftmost group
+                # Prefer target length (14 for NBE, 12 otherwise)
                 lens = [len(g) for g in groups]
-                best_len_bias = min(abs(L - 12) for L in lens)
+                target_len = 14 if bank_id.upper() == "NBE" else 12
+                best_len_bias = min(abs(L - target_len) for L in lens)
                 score -= 0.3 * best_len_bias
                 if score > best_score:
                     best_score = score
@@ -427,11 +428,15 @@ def locate_fields(
         if "pattern" in field and "region_norm" in field and ocr_lines:
             cand_lines = lines_in_region(field["region_norm"])  # type: ignore[arg-type]
             match = best_regex_match(cand_lines, field["pattern"])  # type: ignore[arg-type]
-            # For date field, enforce a strict date pattern; if not matched, skip to alternative strategies
+            # For date field, previously enforced a strict month pattern which rejected OCR variants like '0ct'/'0ec'.
+            # Relax this by allowing tolerant variants and optional separators.
             if match is not None and name == "date":
                 txtn = _norm_text(str(match.get("text", "")))
-                if not re.search(r"\b\d{1,2}[\/\-][A-Za-z]{3}[\/\-]\d{2,4}\b", txtn):
-                    match = None
+                # Accept common OCR confusions (e.g., '0ct', '0ec') and optional separators around month
+                tolerant = r"(?i)(?<!\d)\d{1,2}\s*[\/\.\-]?\s*(?:0ct|0ec|[A-Za-z]{3})\s*[\/\.\-]?\s*\d{2,4}\b"
+                if not re.search(tolerant, txtn):
+                    # Keep the match; downstream parsing will further validate
+                    pass
             if match is not None:
                 px, py = int(match["pos"][0]), int(match["pos"][1])
                 h, w = image_shape
@@ -460,8 +465,8 @@ def locate_fields(
             h, w = image_shape
             region_norm = [min(1.0, px / w), max(0.0, (py - 0.10 * h) / h), min(0.35, 1.0 - px / w), 0.22]
             cand_lines = lines_in_region(region_norm)
-            # Look for date-like text
-            match = best_regex_match(cand_lines, r"\b\d{1,2}[\/\-][A-Za-z]{3}[\/\-]\d{4}\b")
+            # Look for date-like text (tolerant to OCR variants like '0ct'/'0ec')
+            match = best_regex_match(cand_lines, r"(?i)(?<!\d)\d{1,2}\s*[\/\.\-]?\s*(?:0ct|0ec|[A-Za-z]{3})\s*[\/\.\-]?\s*\d{2,4}\b")
             if match is not None:
                 px2, py2 = int(match["pos"][0]), int(match["pos"][1])
                 bw, bh = int(0.20 * w), int(0.08 * h)

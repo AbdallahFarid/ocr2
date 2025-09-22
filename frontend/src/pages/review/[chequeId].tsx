@@ -253,7 +253,11 @@ export default function ChequeReviewPage() {
           ? rec.meets_threshold
           : (rec.field_conf ?? 0) >= threshold,
     }))
-    let keys = withLowFlag.filter((e) => (filterLowOnly ? !e.meets : true)).map((e) => e.name)
+    // Mute 'name' field from UI (temporarily hidden but preserved in payload)
+    let keys = withLowFlag
+      .filter((e) => (filterLowOnly ? !e.meets : true))
+      .map((e) => e.name)
+      .filter((k) => k !== 'name')
     if (sortByConfidence) {
       keys = keys.sort(
         (a, b) => (item.fields[a].field_conf ?? 0) - (item.fields[b].field_conf ?? 0)

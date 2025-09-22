@@ -8,6 +8,7 @@ const banks = [
   { id: 'BANQUE_MISR', label: 'BANQUE MISR' },
   { id: 'CIB', label: 'CIB' },
   { id: 'AAIB', label: 'AAIB' },
+  { id: 'NBE', label: 'NBE' },
 ] as const
 
 type BankId = (typeof banks)[number]['id']

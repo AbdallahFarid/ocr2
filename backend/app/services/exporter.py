@@ -15,7 +15,8 @@ except Exception:  # pragma: no cover - test env may install later
 
 # --- Domain and schema ---
 
-REQUIRED_FIELDS = ("date", "cheque_number", "amount_numeric", "name")
+# NOTE: 'name' muted by request — keep code but do not require it for export validation
+REQUIRED_FIELDS = ("date", "cheque_number", "amount_numeric")
 
 
 @dataclass
@@ -43,13 +44,14 @@ class ExportRow:
         return [data.get(h) for h in headers]
 
 
+# NOTE: 'name' muted from CSV headers — can be re-added later
 DEFAULT_HEADERS: Tuple[str, ...] = (
     "bank",
     "file",
     "date",
     "cheque_number",
     "amount_numeric",
-    "name",
+    # "name",
     "stp",
     "overall_conf",
 )

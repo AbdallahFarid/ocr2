@@ -86,13 +86,16 @@ def get_upload_root() -> Path:
 @router.post("/upload")
 async def upload_cheque(
     request: Request,
-    bank: str = Form(..., description="Bank code, e.g. QNB, FABMISR, BANQUE_MISR, CIB, or AAIB"),
+    bank: str = Form(..., description="Bank code, e.g. QNB, FABMISR, BANQUE_MISR, CIB, AAIB, or NBE"),
     file: UploadFile = File(...),
     correlation_id: str | None = Form(None),
 ) -> Dict[str, Any]:
     bank = bank.strip().upper()
-    if bank not in {"QNB", "FABMISR", "BANQUE_MISR", "CIB", "AAIB"}:
-        raise HTTPException(status_code=400, detail="Unsupported bank. Use QNB, FABMISR, BANQUE_MISR, CIB, or AAIB.")
+    if bank not in {"QNB", "FABMISR", "BANQUE_MISR", "CIB", "AAIB", "NBE"}:
+        raise HTTPException(
+            status_code=400,
+            detail="Unsupported bank. Use QNB, FABMISR, BANQUE_MISR, CIB, AAIB, or NBE.",
+        )
 
     # Validate content type and size (read into memory; adjust for large files if needed)
     allowed_ct = {"image/jpeg", "image/jpg", "image/png", "image/tiff"}
@@ -142,12 +145,13 @@ class ExportRequest(BaseModel):
 @router.post("/export")
 async def export_items(req: ExportRequest) -> Response:
     # Build CSV in-memory; apply overrides to parse_norm (and mirror into ocr_text for Arabic) per item
+    # 'name' muted from export; keep code commented for later reintroduction
     headers = [
         "Bank",
         "date",
         "cheque number",
         "amount",
-        "name",
+        # "name",
     ]
     buf = io.StringIO()
     w = csv.writer(buf)
@@ -182,7 +186,7 @@ async def export_items(req: ExportRequest) -> Response:
             getv("date"),
             getv("cheque_number"),
             getv("amount_numeric"),
-            getv("name"),
+            # getv("name"),
         ]
         w.writerow(row)
 

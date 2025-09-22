@@ -1,0 +1,50 @@
+{
+  "bank_id": "NBE",
+  "template_id": "auto",
+  "version": "0.1.0",
+  "fields": [
+    {
+      "name": "bank_name",
+      "roi_norm": [0.73, 0.03, 0.24, 0.10],
+      "region_norm": [0.70, 0.02, 0.28, 0.14],
+      "pattern": "(?i)^(?:NBE|national\\s+bank\\s+of\\s+egypt)$",
+      "ocr_engine": "latin",
+      "confidence_weight": 1.0
+    },
+    {
+      "name": "date",
+      "roi_norm": [0.80, 0.12, 0.18, 0.10],
+      "region_norm": [0.70, 0.10, 0.28, 0.16],
+      "pattern": "(?i)(?<!\\d)\\d{1,2}\\s*[\\/\\.\\-]?\\s*(?:0ct|0ec|[A-Za-z]{3})\\s*[\\/\\.\\-]?\\s*\\d{2,4}(?:[\\-\\.]\\d{1,2})?(?!\\d)",
+      "ocr_engine": "latin",
+      "confidence_weight": 1.0
+    },
+    {
+      "name": "cheque_number",
+      "roi_norm": [0.42, 0.08, 0.34, 0.10],
+      "region_norm": [0.32, 0.06, 0.48, 0.14],
+      "pattern": "(?<!\\d)\\d{14}(?!\\d)",
+      "ocr_engine": "latin",
+      "confidence_weight": 1.0
+    },
+    {
+      "name": "amount_numeric",
+      "roi_norm": [0.75, 0.36, 0.20, 0.10],
+      "region_norm": [0.70, 0.34, 0.28, 0.18],
+      "pattern": "\\b\\d{1,3}(?:,\\d{3})*\\.\\d{2}\\b",
+      "ocr_engine": "latin",
+      "confidence_weight": 1.0
+    },
+    {
+      "name": "name",
+      "roi_norm": [0.12, 0.16, 0.60, 0.10],
+      "ocr_engine": "arabic",
+      "confidence_weight": 1.0
+    }
+  ],
+  "anchors": [
+    { "name": "bank_label", "region_norm": [0.68, 0.04, 0.30, 0.12], "pattern": "(?i)national\\s+bank\\s+of\\s+egypt" },
+    { "name": "cheque_label", "region_norm": [0.35, 0.02, 0.32, 0.10], "pattern": "(?i)\\bcheque\\b" },
+    { "name": "date_label", "region_norm": [0.82, 0.20, 0.14, 0.10], "pattern": "(?i)\\bdate\\b" }
+  ]
+}
