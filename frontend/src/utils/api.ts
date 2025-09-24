@@ -69,6 +69,76 @@ export async function getReviewItem(chequeId: string): Promise<ReviewItem> {
   }
 }
 
+export type BatchSummary = {
+  bank: string
+  name: string
+  batch_date: string
+  seq: number
+  flagged: boolean
+  status: string
+  processing_started_at?: string | null
+  processing_ended_at?: string | null
+  processing_ms?: number | null
+  total_cheques?: number | null
+  cheques_with_errors?: number | null
+  total_fields?: number | null
+  incorrect_fields?: number | null
+  error_rate_cheques?: number | null
+  error_rate_fields?: number | null
+}
+
+export async function listBatches(
+  bank: 'QNB' | 'FABMISR' | 'BANQUE_MISR' | 'CIB' | 'AAIB' | 'NBE',
+  params?: { from?: string; to?: string; flagged?: boolean }
+): Promise<BatchSummary[]> {
+  if (!backendBase) return []
+  const q = new URLSearchParams({ bank })
+  if (params?.from) q.set('from', params.from)
+  if (params?.to) q.set('to', params.to)
+  if (typeof params?.flagged === 'boolean') q.set('flagged', String(params.flagged))
+  const res = await fetch(`${backendBase.replace(/\/$/, '')}/batches?${q.toString()}`)
+  if (!res.ok) throw new Error(`listBatches failed: ${res.status}`)
+  return res.json()
+}
+
+export type BatchDetail = {
+  bank: string
+  name: string
+  batch_date: string
+  seq: number
+  flagged: boolean
+  status: string
+  kpis: {
+    total_cheques: number | null
+    cheques_with_errors: number | null
+    total_fields: number | null
+    incorrect_fields: number | null
+    error_rate_cheques: number | null
+    error_rate_fields: number | null
+  }
+  cheques: Array<{
+    file: string
+    incorrect_fields_count?: number | null
+    decision?: string | null
+    stp?: boolean | null
+    overall_conf?: number | null
+    index_in_batch?: number | null
+    created_at?: string | null
+  }>
+}
+
+export async function getBatchDetail(
+  bank: 'QNB' | 'FABMISR' | 'BANQUE_MISR' | 'CIB' | 'AAIB' | 'NBE',
+  batchName: string
+): Promise<BatchDetail> {
+  if (!backendBase) throw new Error('No backend configured')
+  const res = await fetch(
+    `${backendBase.replace(/\/$/, '')}/batches/${bank}/${encodeURIComponent(batchName)}`
+  )
+  if (!res.ok) throw new Error(`getBatchDetail failed: ${res.status}`)
+  return res.json()
+}
+
 export async function exportItems(
   items: Array<{ bank: string; file: string }>,
   overrides?: Record<string, Record<string, string>>
@@ -96,6 +166,22 @@ export async function listItems(): Promise<Array<{ bank: string; file: string }>
   if (!backendBase) return []
   const res = await fetch(`${backendBase.replace(/\/$/, '')}/review/items`)
   if (!res.ok) throw new Error(`listItems failed: ${res.status}`)
+  return res.json()
+}
+
+export async function finalizeBatch(
+  bank: 'QNB' | 'FABMISR' | 'BANQUE_MISR' | 'CIB' | 'AAIB' | 'NBE',
+  correlationId: string
+): Promise<{ ok: boolean; bank: string; batch: string; metrics?: any }> {
+  if (!backendBase) throw new Error('No backend configured')
+  const fd = new FormData()
+  fd.append('bank', bank)
+  fd.append('correlation_id', correlationId)
+  const res = await fetch(`${backendBase.replace(/\/$/, '')}/review/batches/finalize`, {
+    method: 'POST',
+    body: fd,
+  })
+  if (!res.ok) throw new Error(`finalize failed: ${res.status}`)
   return res.json()
 }
 

@@ -1,6 +1,6 @@
 import React from 'react'
 import { useNavigate } from 'react-router-dom'
-import { uploadCheque, uploadZip } from '../../utils/api'
+import { uploadCheque, uploadZip, finalizeBatch } from '../../utils/api'
 
 const banks = [
   { id: 'QNB', label: 'QNB' },
@@ -77,6 +77,8 @@ export default function UploadPage() {
           localStorage.setItem(`uploadQueue:${queueId}`, JSON.stringify(urls))
           localStorage.setItem(`uploadQueue:total:${queueId}`, String(resp.count ?? urls.length))
         } catch {}
+        // Finalize the batch now that the zip has completed (fire-and-forget)
+        finalizeBatch(bank, queueId).catch(() => {})
         // Navigate to first review item
         const first = resp.firstReviewUrl
         const sep = first.includes('?') ? '&' : '?'
@@ -128,8 +130,10 @@ export default function UploadPage() {
             console.error('upload failed', err)
           }
         })
-        // Do not await all; allow background completion
-        Promise.allSettled(tasks).finally(() => setLoading(false))
+        // Finalize batch after all uploads settle
+        Promise.allSettled(tasks)
+          .then(() => finalizeBatch(bank, queueId).catch(() => {}))
+          .finally(() => setLoading(false))
       }
     } catch (err: any) {
       setError(String(err?.message || err))
