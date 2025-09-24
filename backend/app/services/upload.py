@@ -3,12 +3,17 @@ from __future__ import annotations
 import os
 import random
 import string
-from datetime import datetime, timezone
-from typing import Any, Dict, Tuple
+from datetime import datetime, timezone, date
+from typing import Any, Dict, Tuple, Optional
 
 from app.persistence.audit import write_audit_json
 from app.services.pipeline_run import run_pipeline_on_image
 from app.services.routing import decide_route
+from app.services.batches import cairo_today, format_batch_name
+from app.db.session import db_enabled, session_scope
+from app.db import crud as dbcrud
+import logging
+from sqlalchemy.exc import IntegrityError
 
 
 def _gen_file_id(ext: str) -> str:
@@ -26,6 +31,11 @@ def save_upload_and_process(
     original_filename: str,
     correlation_id: str | None,
     public_base: str,
+    # Optional DB batch override to group many files into one batch
+    db_batch_name: Optional[str] = None,
+    db_batch_date: Optional[date] = None,
+    db_seq: Optional[int] = None,
+    index_in_batch: Optional[int] = None,
 ) -> Tuple[str, Dict[str, Any]]:
     """Save the uploaded file, create a minimal ReviewItem, and write audit JSON.
 
@@ -78,5 +88,47 @@ def save_upload_and_process(
         "fields": fields,
         "imageUrl": image_url,
     }
+
+    # Best-effort DB persistence when enabled
+    try:
+        if db_enabled():
+            with session_scope() as db:
+                # If override provided, reuse that batch; else compute default one-per-call
+                if db_batch_name:
+                    d = db_batch_date or cairo_today()
+                    s = db_seq or dbcrud.get_max_seq_for_bank_date(db, bank_code=bank, d=d) + 1
+                    batch_name = db_batch_name
+                else:
+                    d = cairo_today()
+                    s = dbcrud.get_max_seq_for_bank_date(db, bank_code=bank, d=d) + 1
+                    batch_name = format_batch_name(d, bank, s)
+                # ensure bank exists to satisfy FK
+                dbcrud.ensure_bank_exists(db, code=bank, name=bank)
+                batch = dbcrud.get_batch_by_name(db, bank_code=bank, name=batch_name)
+                if batch is None:
+                    try:
+                        batch = dbcrud.create_batch(db, bank_code=bank, name=batch_name, batch_date=d, seq=s)
+                    except IntegrityError:
+                        # Another concurrent request created the same batch; fetch it
+                        db.rollback()
+                        batch = dbcrud.get_batch_by_name(db, bank_code=bank, name=batch_name)
+                        if batch is None:
+                            raise
+                # Persist cheque and fields
+                dbcrud.create_cheque_with_fields(
+                    db,
+                    batch=batch,
+                    bank_code=bank,
+                    file_id=os.path.basename(file_id),
+                    original_filename=original_filename,
+                    image_path=file_path,
+                    decision=decision,
+                    processed_at=datetime.now(timezone.utc),
+                    index_in_batch=index_in_batch,
+                    fields=fields,
+                )
+    except Exception as e:
+        # DB write is best-effort and should not break the upload flow
+        logging.getLogger(__name__).exception("DB persistence error during save_upload_and_process: %s", e)
 
     return os.path.basename(file_id), review_item

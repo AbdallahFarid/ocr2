@@ -8,4 +8,5 @@ CHEQUE_NUMBER_PATTERNS = {
     "BANQUE_MISR": {"regex": r"^\d{12}$"},
     "CIB": {"regex": r"^\d{12}$"},
     "AAIB": {"regex": r"^\d{9,10}$"},
+    "NBE": {"regex": r"^\d{12}$"},
 }

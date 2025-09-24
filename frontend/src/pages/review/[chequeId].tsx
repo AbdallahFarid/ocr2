@@ -141,15 +141,42 @@ export default function ChequeReviewPage() {
     }
   }, [queueId, queueUrls])
 
+  const hasDirtyEdits = React.useCallback(() => {
+    return !!itemKey && edits && Object.keys(edits).length > 0
+  }, [edits, itemKey])
+
+  const autoSaveIfNeeded = React.useCallback(async () => {
+    if (!item || !hasDirtyEdits()) return
+    const updates: Record<string, string> = {}
+    for (const [k, v] of Object.entries(edits)) {
+      if (typeof v === 'string') updates[k] = v
+    }
+    if (Object.keys(updates).length === 0) return
+    try {
+      await submitCorrections(chequeId, updates, {
+        bank: item.bank,
+        file: item.file,
+        reviewer_id: 'dev',
+      })
+    } catch (e) {
+      // Best-effort auto-save; do not block navigation on error
+      console.warn('Auto-save failed before Next', e)
+    }
+  }, [item, edits, chequeId, hasDirtyEdits])
+
   const goToIndex = React.useCallback(
-    (nextIdx: number) => {
+    async (nextIdx: number) => {
       if (!queueUrls || !queueId) return
       if (nextIdx < 0 || nextIdx >= queueUrls.length) return
+      // Auto-save only when moving forward
+      if (queueIndex >= 0 && nextIdx > queueIndex) {
+        await autoSaveIfNeeded()
+      }
       const target = queueUrls[nextIdx]
       const sep = target.includes('?') ? '&' : '?'
       navigate(`${target}${sep}queue=${encodeURIComponent(queueId)}&i=${nextIdx}`)
     },
-    [queueUrls, queueId, navigate]
+    [queueUrls, queueId, queueIndex, navigate, autoSaveIfNeeded]
   )
 
   const hasPrev = queueUrls && queueIndex > 0

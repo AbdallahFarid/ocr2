@@ -8,6 +8,9 @@ class BankLabel(str, Enum):
     QNB = "QNB"
     FABMISR = "FABMISR"
     BANQUE_MISR = "BANQUE_MISR"
+    CIB = "CIB"
+    AAIB = "AAIB"
+    NBE = "NBE"
     UNKNOWN = "UNKNOWN"
 
 

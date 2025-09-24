@@ -83,7 +83,8 @@ export async function exportItems(
   return res.blob()
 }
 
-let backendBase: string | undefined = (import.meta as any).env?.VITE_BACKEND_BASE || 'http://127.0.0.1:8000'
+let backendBase: string | undefined =
+  (import.meta as any).env?.VITE_BACKEND_BASE || 'http://127.0.0.1:8000'
 
 export function setBackendBase(url?: string) {
   backendBase = url
@@ -95,6 +96,29 @@ export async function listItems(): Promise<Array<{ bank: string; file: string }>
   if (!backendBase) return []
   const res = await fetch(`${backendBase.replace(/\/$/, '')}/review/items`)
   if (!res.ok) throw new Error(`listItems failed: ${res.status}`)
+  return res.json()
+}
+
+export async function uploadZip(
+  bank: 'QNB' | 'FABMISR' | 'BANQUE_MISR' | 'CIB' | 'AAIB' | 'NBE',
+  zipFile: File,
+  correlationId?: string
+): Promise<{
+  ok: boolean
+  count: number
+  firstReviewUrl: string
+  items: Array<{ bank: string; file: string; reviewUrl: string; imageUrl?: string }>
+}> {
+  if (!backendBase) throw new Error('No backend configured')
+  const fd = new FormData()
+  fd.append('bank', bank)
+  if (correlationId) fd.append('correlation_id', correlationId)
+  fd.append('zip_file', zipFile)
+  const res = await fetch(`${backendBase.replace(/\/$/, '')}/review/upload`, {
+    method: 'POST',
+    body: fd,
+  })
+  if (!res.ok) throw new Error(`upload zip failed: ${res.status}`)
   return res.json()
 }
 
