@@ -12,6 +12,10 @@ import json
 import zipfile
 import time
 from datetime import datetime, timezone
+import numpy as np
+import cv2
+import logging
+import copy
 
 from app.schemas.review import ReviewItem, CorrectionPayload, CorrectionResult
 from app.persistence.audit import append_corrections
@@ -76,7 +80,16 @@ async def get_item(request: Request, bank: str, file_id: str) -> ReviewItem:
 
 
 @router.post("/items/{bank}/{file_id}/corrections", response_model=CorrectionResult)
-async def submit_corrections(bank: str, file_id: str, payload: CorrectionPayload) -> CorrectionResult:
+async def submit_corrections(
+    bank: str,
+    file_id: str,
+    payload: CorrectionPayload,
+    background_tasks: BackgroundTasks,
+) -> CorrectionResult:
+    # Normalize inputs for DB lookups
+    bank = bank.strip().upper()
+    file_id = file_id.strip()
+
     p = _audit_path(bank, file_id)
     if not Path(p).exists():
         raise HTTPException(status_code=404, detail="Audit JSON not found")
@@ -103,7 +116,10 @@ async def submit_corrections(bank: str, file_id: str, payload: CorrectionPayload
             for fname, upd in payload.updates.items():
                 before = None
                 try:
-                    before = (prev_fields.get(fname) or {}).get("parse_norm")
+                    prev = (prev_fields.get(fname) or {})
+                    before = prev.get("parse_norm")
+                    if before in (None, ""):
+                        before = prev.get("ocr_text")
                 except Exception:
                     before = None
                 corrs[fname] = {
@@ -111,6 +127,8 @@ async def submit_corrections(bank: str, file_id: str, payload: CorrectionPayload
                     "after": upd.value,
                     "reason": upd.reason,
                 }
+            # Apply and then trigger KPI recompute for the parent batch in background
+            batch_name: str | None = None
             with session_scope() as db:
                 dbcrud.apply_corrections(
                     db,
@@ -120,9 +138,18 @@ async def submit_corrections(bank: str, file_id: str, payload: CorrectionPayload
                     reviewer_id=payload.reviewer_id,
                     at=at_dt,
                 )
+                # Find cheque and its batch to recompute KPIs
+                from app.db.models import Batch as BatchModel
+                ch = dbcrud.find_cheque_by_bank_file(db, bank_code=bank, file_id=file_id)
+                if ch:
+                    b = db.get(BatchModel, ch.batch_id)
+                    if b:
+                        batch_name = b.name
+            if batch_name:
+                background_tasks.add_task(_bg_recompute_kpis, bank_code=bank, batch_name=batch_name)
     except Exception:
-        # Do not fail API if DB write fails
-        pass
+        # Do not fail API if DB write fails, but log for diagnostics
+        logging.getLogger(__name__).exception("DB mirror for corrections failed")
     return CorrectionResult(
         ok=True,
         updated_fields=list(payload.updates.keys()),
@@ -201,6 +228,142 @@ def _bg_recompute_kpis(bank_code: str, batch_name: str) -> None:
     except Exception:
         # best-effort background job
         pass
+
+
+def _resolve_correlation_map(bank: str, correlation_id: str) -> tuple[Optional[str], Optional[Path]]:
+    root = _batch_map_root() / bank
+    key = _sanitize(str(correlation_id)) or "anon"
+    p = root / f"{key}.txt"
+    if not p.exists():
+        return None, None
+    try:
+        txt = p.read_text(encoding="utf-8").strip()
+        if not txt:
+            return None, p
+        name, dstr, seqs = txt.split("|")
+        return name, p
+    except Exception:
+        return None, p
+
+
+@router.post("/batches/finalize")
+async def finalize_batch(
+    bank: str = Form(..., description="Bank code"),
+    correlation_id: str = Form(..., description="Upload session correlation id"),
+) -> Dict[str, Any]:
+    """Finalize a multi-file upload session (by correlation_id) and recompute KPIs.
+
+    This sets processing_ended_at and processing_ms for the batch and performs a final KPI recompute.
+    Idempotent: if already finalized, will recompute again and succeed.
+    """
+    bank = bank.strip().upper()
+    if bank not in ALLOWED_BANKS:
+        raise HTTPException(status_code=400, detail="Unsupported bank.")
+    if not correlation_id or not correlation_id.strip():
+        raise HTTPException(status_code=400, detail="Missing correlation_id")
+
+    batch_name, path_obj = _resolve_correlation_map(bank, correlation_id)
+    if not batch_name:
+        raise HTTPException(status_code=404, detail="Unknown correlation_id or no batch mapping found")
+
+    # Synchronously recompute & update KPIs (also sets ended_at/ms inside CRUD helper)
+    # Respect env toggle: if DATABASE_URL is not set, treat DB as disabled regardless of prior engine state
+    if not os.getenv("DATABASE_URL") or not db_enabled():
+        raise HTTPException(status_code=503, detail="DB not enabled")
+    metrics: dict[str, Any] | None = None
+    try:
+        # Ensure schema exists on the current engine (useful for SQLite tests)
+        try:
+            from app.db.models import Base
+            from app.db.session import get_engine
+            eng = get_engine()
+            if eng is not None:
+                Base.metadata.create_all(eng)
+        except Exception:
+            pass
+        # First, mark batch as ended now to guarantee timestamps even if KPI recompute is a no-op
+        try:
+            from datetime import datetime, timezone
+            from app.db.models import Batch as BatchModel
+            with session_scope() as db:
+                b = db.query(BatchModel).filter(BatchModel.bank_code == bank, BatchModel.name == batch_name).first()
+                if b and b.processing_ended_at is None:
+                    ended = datetime.now(timezone.utc)
+                    b.processing_ended_at = ended
+                    if b.processing_started_at:
+                        delta = ended - b.processing_started_at
+                        b.processing_ms = int(delta.total_seconds() * 1000)
+        except Exception:
+            pass
+        with session_scope() as db:
+            metrics = dbcrud.recompute_and_update_batch_kpis_by_name(db, bank_code=bank, batch_name=batch_name) or {}
+            # Within the same transaction, ensure ended timestamp is present
+            from app.db.models import Batch as BatchModel
+            b = db.query(BatchModel).filter(BatchModel.bank_code == bank, BatchModel.name == batch_name).first()
+            if b and b.processing_ended_at is None:
+                from datetime import datetime, timezone
+                ended = datetime.now(timezone.utc)
+                b.processing_ended_at = ended
+                if b.processing_started_at:
+                    delta = ended - b.processing_started_at
+                    b.processing_ms = int(delta.total_seconds() * 1000)
+    except Exception:
+        # As a last resort, mark batch ended even if KPI recompute failed (e.g., partial schema in tests)
+        try:
+            from datetime import datetime, timezone
+            with session_scope() as db:
+                from app.db.models import Batch as BatchModel
+                b = db.query(BatchModel).filter(BatchModel.bank_code == bank, BatchModel.name == batch_name).first()
+                if b:
+                    ended = datetime.now(timezone.utc)
+                    b.processing_ended_at = ended
+                    if b.processing_started_at:
+                        delta = ended - b.processing_started_at
+                        b.processing_ms = int(delta.total_seconds() * 1000)
+        except Exception:
+            pass
+    # Ensure ended timestamp is set even if recompute returned without updating it
+    try:
+        from datetime import datetime, timezone
+        with session_scope() as db:
+            from app.db.models import Batch as BatchModel
+            b = db.query(BatchModel).filter(BatchModel.bank_code == bank, BatchModel.name == batch_name).first()
+            if b and b.processing_ended_at is None:
+                ended = datetime.now(timezone.utc)
+                b.processing_ended_at = ended
+                if b.processing_started_at:
+                    delta = ended - b.processing_started_at
+                    b.processing_ms = int(delta.total_seconds() * 1000)
+    except Exception:
+        pass
+
+    # Best-effort: clear the mapping file
+    try:
+        if path_obj and path_obj.exists():
+            path_obj.unlink(missing_ok=True)  # type: ignore[arg-type]
+    except Exception:
+        pass
+
+    # Final fallback: enforce ended timestamp with a direct UPDATE if somehow still NULL
+    try:
+        from datetime import datetime, timezone
+        from sqlalchemy import update
+        from app.db.models import Batch as BatchModel
+        with session_scope() as db:
+            nowdt = datetime.now(timezone.utc)
+            db.execute(
+                update(BatchModel)
+                .where(
+                    BatchModel.bank_code == bank,
+                    BatchModel.name == batch_name,
+                    BatchModel.processing_ended_at.is_(None),
+                )
+                .values(processing_ended_at=nowdt)
+            )
+    except Exception:
+        pass
+
+    return {"ok": True, "bank": bank, "batch": batch_name, "metrics": metrics or {}}
 
 
 @router.post("/upload")
@@ -284,6 +447,15 @@ async def upload_cheque(
                     continue
                 with zf.open(zi) as f:
                     data = f.read()
+                # Optional content sniffing
+                if os.getenv("UPLOAD_SNIFF", "0") == "1":
+                    try:
+                        arr = np.frombuffer(data, dtype=np.uint8)
+                        img = cv2.imdecode(arr, cv2.IMREAD_UNCHANGED)
+                        if img is None:
+                            continue
+                    except Exception:
+                        continue
                 file_id, item = save_upload_and_process(
                     upload_dir=upload_root,
                     audit_root=audit_root,
@@ -326,10 +498,12 @@ async def upload_cheque(
             u = _as_upload_file(uf)
             if u and (u.filename or "").strip():
                 all_files.append(u)
+    single_mode = False
     if not all_files:
         # Fall back to single-file param
         if _as_upload_file(file_obj) and (file_obj.filename or "").strip():
             all_files = [file_obj]
+            single_mode = True
         else:
             raise HTTPException(status_code=400, detail="Provide a file(s) or a zip_file")
 
@@ -343,10 +517,20 @@ async def upload_cheque(
     upload_root = str(get_upload_root())
     audit_root = str(get_audit_root())
     max_mb = float(os.getenv("MAX_UPLOAD_MB", "20"))
+    single_item_payload: dict[str, Any] | None = None
     for idx, uf in enumerate(all_files):
         data = await uf.read()
         if len(data) > max_mb * 1024 * 1024:
             raise HTTPException(status_code=413, detail=f"File too large: {uf.filename} (Max {int(max_mb)} MB)")
+        # Optional content sniffing (reject non-image)
+        if os.getenv("UPLOAD_SNIFF", "0") == "1":
+            try:
+                arr = np.frombuffer(data, dtype=np.uint8)
+                img = cv2.imdecode(arr, cv2.IMREAD_UNCHANGED)
+                if img is None:
+                    raise ValueError("invalid image")
+            except Exception:
+                raise HTTPException(status_code=400, detail=f"Invalid image content: {uf.filename}")
         file_id, item = save_upload_and_process(
             upload_dir=upload_root,
             audit_root=audit_root,
@@ -360,17 +544,30 @@ async def upload_cheque(
             db_seq=db_seq,
             index_in_batch=idx,
         )
-        items.append({
+        payload_entry = {
             "bank": bank,
             "file": file_id,
             "imageUrl": item.get("imageUrl"),
             "reviewUrl": f"/review/{bank}/{file_id}",
-        })
+        }
+        items.append(payload_entry)
+        # If this is a single-file submission (not multi-file), prepare single response format
+        if single_mode and len(all_files) == 1:
+            single_item_payload = {
+                "ok": True,
+                "bank": bank,
+                "file": file_id,
+                "imageUrl": item.get("imageUrl"),
+                "reviewUrl": f"/review/{bank}/{file_id}",
+                "item": item,
+            }
 
     # Enqueue KPI recompute for this batch
     if db_batch_name:
         background_tasks.add_task(_bg_recompute_kpis, bank_code=bank, batch_name=db_batch_name)
-
+    # If this was a single-file upload (form field 'file'), return single-item payload
+    if single_mode and single_item_payload is not None:
+        return single_item_payload
     return {"ok": True, "count": len(items), "firstReviewUrl": items[0]["reviewUrl"], "items": items}
 
 
@@ -399,8 +596,11 @@ async def export_items(req: ExportRequest) -> Response:
     buf = io.StringIO()
     w = csv.writer(buf)
     w.writerow(headers)
+    # Track affected batches so we can mark them approved and recompute KPIs
+    affected_batches: set[tuple[str, str]] = set()  # (bank_code, batch_name)
     for it in req.items:
         bank = it.bank.strip()
+        bank_u = bank.upper()
         file_id = it.file.strip()
         p = _audit_path(bank, file_id)
         if not Path(p).exists():
@@ -409,6 +609,8 @@ async def export_items(req: ExportRequest) -> Response:
         with open(p, "r", encoding="utf-8") as f:
             data = json.load(f)
         fields = data.get("fields") or {}
+        # Take a deep copy BEFORE applying overrides so we have true "before" values
+        prev_fields = copy.deepcopy(fields)
         key = f"{bank}/{file_id}"
         ov = (req.overrides or {}).get(key) or {}
         # Apply overrides to parse_norm; mirror into ocr_text for Arabic
@@ -418,6 +620,50 @@ async def export_items(req: ExportRequest) -> Response:
                 rec["parse_norm"] = str(v)
                 if rec.get("ocr_lang") == "ar":
                     rec["ocr_text"] = str(v)
+        # Persist overrides as corrections to the audit JSON and DB (best-effort)
+        try:
+            # 1) Update audit JSON with corrections
+            if ov:
+                from app.schemas.review import CorrectionFieldUpdate
+                payload_updates = {k: {"value": str(v), "reason": None} for k, v in ov.items() if k != "name"}
+                if payload_updates:
+                    append_corrections(
+                        audit_path=p,
+                        reviewer_id="export",
+                        updates=payload_updates,
+                        reason_by_field=None,
+                    )
+            # 2) Mirror to DB as corrections and mark fields corrected
+            if db_enabled() and ov:
+                with session_scope() as db:
+                    ch = dbcrud.find_cheque_by_bank_file(db, bank_code=bank_u, file_id=file_id)
+                    if ch:
+                        # Build corrections dict using BEFORE from current fields
+                        corr_map: dict[str, dict[str, any]] = {}
+                        for k, v in ov.items():
+                            if k == "name":
+                                continue  # muted
+                            # Use original value from prev_fields captured before overrides
+                            if isinstance(prev_fields, dict):
+                                prev = (prev_fields.get(k) or {})
+                                before = prev.get("parse_norm")
+                                if before in (None, ""):
+                                    before = prev.get("ocr_text")
+                            else:
+                                before = None
+                            corr_map[k] = {"before": before, "after": str(v), "reason": None}
+                        if corr_map:
+                            dbcrud.apply_corrections(
+                                db,
+                                bank_code=bank_u,
+                                file_id=file_id,
+                                corrections=corr_map,
+                                reviewer_id="export",
+                                at=datetime.now(timezone.utc),
+                            )
+        except Exception:
+            # Never block export on correction persistence
+            logging.getLogger(__name__).exception("Failed to persist export overrides as corrections")
         def getv(name: str) -> str | None:
             rec = fields.get(name) or {}
             v = rec.get("parse_norm")
@@ -433,8 +679,39 @@ async def export_items(req: ExportRequest) -> Response:
         ]
         w.writerow(row)
 
+        # Best-effort: mark the DB batch as approved and record end time
+        try:
+            if db_enabled():
+                from app.db.models import Batch as BatchModel
+                with session_scope() as db:
+                    ch = dbcrud.find_cheque_by_bank_file(db, bank_code=bank_u, file_id=file_id)
+                    if ch:
+                        b = db.get(BatchModel, ch.batch_id)
+                        if b:
+                            # Mark approved upon export
+                            b.status = "approved"
+                            if b.processing_ended_at is None:
+                                ended = datetime.now(timezone.utc)
+                                b.processing_ended_at = ended
+                                if b.processing_started_at:
+                                    delta = ended - b.processing_started_at
+                                    b.processing_ms = int(delta.total_seconds() * 1000)
+                            affected_batches.add((b.bank_code, b.name))
+        except Exception:
+            # export should not fail on DB errors
+            pass
+
     # Prepend UTF-8 BOM so Excel detects UTF-8 and renders Arabic correctly
     content = "\ufeff" + buf.getvalue()
+    # Recompute KPIs for affected batches (best-effort)
+    try:
+        if db_enabled():
+            for bank_code, batch_name in affected_batches:
+                with session_scope() as db:
+                    dbcrud.recompute_and_update_batch_kpis_by_name(db, bank_code=bank_code, batch_name=batch_name)
+    except Exception:
+        pass
+
     resp = Response(content=content, media_type="text/csv; charset=utf-8")
     resp.headers["Content-Disposition"] = "attachment; filename=cheques.csv"
     return resp

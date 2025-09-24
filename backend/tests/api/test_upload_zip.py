@@ -19,6 +19,9 @@ def _make_zip_bytes(files: Dict[str, bytes]) -> bytes:
 
 
 def test_upload_zip_happy_path(monkeypatch):
+    # Ensure rate limiter won't interfere
+    from app.main import set_rate_limit
+    set_rate_limit(rps=1000, burst=1000, clear_buckets=True)
     client = TestClient(app)
 
     # Monkeypatch pipeline to avoid heavy processing
@@ -50,6 +53,8 @@ def test_upload_zip_happy_path(monkeypatch):
 
 
 def test_upload_single_file(monkeypatch):
+    from app.main import set_rate_limit
+    set_rate_limit(rps=1000, burst=1000, clear_buckets=True)
     client = TestClient(app)
 
     def fake_save_upload_and_process(**kwargs) -> Tuple[str, Dict[str, Any]]:

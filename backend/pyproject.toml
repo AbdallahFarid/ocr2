@@ -39,8 +39,9 @@ exclude = [
 dev = [
   "pytest>=7.4",
   "httpx>=0.26",
+  "pytest-cov>=4.1",
 ]
 
 [tool.pytest.ini_options]
-addopts = "-q"
+addopts = "-q --cov=app --cov-report=term-missing"
 pythonpath = ["app"]

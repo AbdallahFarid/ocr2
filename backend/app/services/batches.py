@@ -20,7 +20,7 @@ def cairo_today(now: Optional[datetime] = None) -> date:
     - If unavailable, gracefully fall back to the UTC date (no crash).
     - If `now` is None, current UTC time is used to compute the date.
     """
-    _now = now or datetime.utcnow().replace(tzinfo=timezone.utc)
+    _now = now or datetime.now(timezone.utc)
     if _now.tzinfo is None:
         _now = _now.replace(tzinfo=timezone.utc)
     if ZoneInfo is not None:

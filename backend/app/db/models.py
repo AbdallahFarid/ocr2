@@ -18,8 +18,86 @@ from sqlalchemy import (
     UniqueConstraint,
     Index,
 )
-from sqlalchemy.dialects.postgresql import UUID, JSONB
 from sqlalchemy.orm import declarative_base, relationship
+from sqlalchemy.types import TypeDecorator, CHAR
+from sqlalchemy.dialects import postgresql
+
+"""
+Custom cross-database types
+"""
+
+
+class GUID(TypeDecorator):
+    """Platform-independent GUID/UUID.
+
+    - Uses native UUID on PostgreSQL (returns/binds uuid.UUID)
+    - Uses CHAR(36) elsewhere (returns/binds str)
+    """
+
+    impl = CHAR
+    cache_ok = True
+
+    def load_dialect_impl(self, dialect):
+        if dialect.name == "postgresql":
+            return dialect.type_descriptor(postgresql.UUID(as_uuid=True))
+        return dialect.type_descriptor(CHAR(36))
+
+    def process_bind_param(self, value, dialect):
+        if value is None:
+            return value
+        if dialect.name == "postgresql":
+            if isinstance(value, uuid.UUID):
+                return value
+            return uuid.UUID(str(value))
+        # other dialects: store as string
+        return str(value) if not isinstance(value, str) else value
+
+    def process_result_value(self, value, dialect):
+        if value is None:
+            return value
+        if dialect.name == "postgresql":
+            return value if isinstance(value, uuid.UUID) else uuid.UUID(str(value))
+        return value if isinstance(value, str) else str(value)
+
+
+class JSONX(TypeDecorator):
+    """JSON cross-dialect.
+
+    - PostgreSQL: JSONB
+    - Others: TEXT storing JSON string. Dicts are serialized on bind.
+    """
+
+    impl = Text
+    cache_ok = True
+
+    def load_dialect_impl(self, dialect):
+        if dialect.name == "postgresql":
+            return dialect.type_descriptor(postgresql.JSONB(astext_type=Text()))
+        return dialect.type_descriptor(Text())
+
+    def process_bind_param(self, value, dialect):
+        if value is None:
+            return value
+        if dialect.name == "postgresql":
+            # Let PG JSONB handle dicts/lists directly
+            return value
+        # Others: serialize to JSON string
+        import json as _json
+        if isinstance(value, (dict, list)):
+            return _json.dumps(value, ensure_ascii=False)
+        return str(value)
+
+    def process_result_value(self, value, dialect):
+        if value is None:
+            return value
+        if dialect.name == "postgresql":
+            return value
+        # Parse JSON string if possible
+        import json as _json
+        try:
+            return _json.loads(value)
+        except Exception:
+            return value
 
 Base = declarative_base()
 
@@ -32,7 +110,7 @@ class Bank(Base):
 
 class Batch(Base):
     __tablename__ = "batches"
-    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    id = Column(GUID(), primary_key=True, default=uuid.uuid4)
     bank_code = Column(String(32), ForeignKey("banks.code", ondelete="RESTRICT"), nullable=False)
     name = Column(String(64), nullable=False)
     batch_date = Column(Date, nullable=False)
@@ -63,8 +141,8 @@ class Batch(Base):
 
 class Cheque(Base):
     __tablename__ = "cheques"
-    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    batch_id = Column(UUID(as_uuid=True), ForeignKey("batches.id", ondelete="CASCADE"), nullable=False)
+    id = Column(GUID(), primary_key=True, default=uuid.uuid4)
+    batch_id = Column(GUID(), ForeignKey("batches.id", ondelete="CASCADE"), nullable=False)
     bank_code = Column(String(32), ForeignKey("banks.code", ondelete="RESTRICT"), nullable=False)
     file_id = Column(String(64), nullable=False)
     original_filename = Column(String(256))
@@ -89,7 +167,7 @@ class Cheque(Base):
 class ChequeField(Base):
     __tablename__ = "cheque_fields"
     id = Column(Integer, primary_key=True)
-    cheque_id = Column(UUID(as_uuid=True), ForeignKey("cheques.id", ondelete="CASCADE"), nullable=False)
+    cheque_id = Column(GUID(), ForeignKey("cheques.id", ondelete="CASCADE"), nullable=False)
     name = Column(String(64), nullable=False)
     field_conf = Column(Numeric(5, 3))
     loc_conf = Column(Numeric(5, 3))
@@ -99,7 +177,8 @@ class ChequeField(Base):
     parse_norm = Column(Text)
     ocr_text = Column(Text)
     ocr_lang = Column(String(8))
-    validation = Column(JSONB)
+    # Cross-DB JSON: JSONB on Postgres, JSON string on others
+    validation = Column(JSONX())
     corrected = Column(Boolean, nullable=False, default=False)
     last_corrected_at = Column(DateTime(timezone=True))
 

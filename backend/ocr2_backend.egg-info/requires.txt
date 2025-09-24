@@ -8,12 +8,10 @@ arabic-reshaper>=3.0.0
 python-bidi>=0.4.2
 openpyxl>=3.1
 SQLAlchemy>=2.0
-psycopg2-binary>=2.9
 psycopg[binary]>=3.1
-alembic>=1.13
 python-dotenv>=1.0
-tzdata>=2024.1
 
 [dev]
 pytest>=7.4
 httpx>=0.26
+pytest-cov>=4.1

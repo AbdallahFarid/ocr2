@@ -3,8 +3,11 @@ app/__init__.py
 app/config.py
 app/main.py
 app/api/__init__.py
+app/api/batches.py
+app/api/metrics.py
 app/api/review.py
-app/db/__init__.py
+app/constants/banks.py
+app/db/crud.py
 app/db/models.py
 app/db/session.py
 app/ocr/__init__.py
@@ -25,6 +28,7 @@ app/persistence/audit.py
 app/pipeline/postprocess.py
 app/schemas/review.py
 app/services/__init__.py
+app/services/batches.py
 app/services/exporter.py
 app/services/pipeline_run.py
 app/services/routing.py
@@ -39,3 +43,4 @@ ocr2_backend.egg-info/SOURCES.txt
 ocr2_backend.egg-info/dependency_links.txt
 ocr2_backend.egg-info/requires.txt
 ocr2_backend.egg-info/top_level.txt
+tests/test_finalize_endpoint.py

@@ -14,6 +14,7 @@ from app.db.session import db_enabled, session_scope
 from app.db import crud as dbcrud
 import logging
 from sqlalchemy.exc import IntegrityError
+import time
 
 
 def _gen_file_id(ext: str) -> str:
@@ -54,7 +55,8 @@ def save_upload_and_process(
     with open(file_path, "wb") as f:
         f.write(file_bytes)
 
-    # Run the real OCR + locator + ROI OCR pipeline
+    # Run the real OCR + locator + ROI OCR pipeline and time it
+    t0 = time.perf_counter()
     fields = run_pipeline_on_image(file_path, bank=bank, template_id="auto", langs=["en", "ar"], min_conf=0.3)
     # Decide routing based on computed field confidences
     rd = decide_route(fields)
@@ -115,6 +117,8 @@ def save_upload_and_process(
                         if batch is None:
                             raise
                 # Persist cheque and fields
+                # Compute processing time (ms) from pipeline run
+                processing_ms = int((time.perf_counter() - t0) * 1000)
                 dbcrud.create_cheque_with_fields(
                     db,
                     batch=batch,
@@ -126,6 +130,7 @@ def save_upload_and_process(
                     processed_at=datetime.now(timezone.utc),
                     index_in_batch=index_in_batch,
                     fields=fields,
+                    processing_ms=processing_ms,
                 )
     except Exception as e:
         # DB write is best-effort and should not break the upload flow
