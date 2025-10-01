@@ -162,6 +162,9 @@ def apply_corrections(
         before = corr.get("before")
         after = corr.get("after")
         reason = corr.get("reason")
+        # Skip if before == after (no actual change)
+        if before == after:
+            continue
         f = existing.get(field_name)
         if not f:
             # If the field does not exist in DB (edge case), create it minimal

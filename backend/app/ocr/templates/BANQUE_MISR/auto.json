@@ -21,9 +21,9 @@
     },
     {
       "name": "cheque_number",
-      "roi_norm": [0.36, 0.70, 0.32, 0.14],
-      "region_norm": [0.28, 0.66, 0.44, 0.22],
-      "pattern": "\\b\\d{10,13}\\b",
+      "roi_norm": [0.34, 0.02, 0.30, 0.12],
+      "region_norm": [0.24, 0.00, 0.52, 0.18],
+      "pattern": "\\b\\d{6,}\\b",
       "ocr_engine": "latin",
       "confidence_weight": 1.0
     },

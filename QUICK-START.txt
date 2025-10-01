@@ -1,0 +1,60 @@
+╔═══════════════════════════════════════════════════════════════╗
+║                                                               ║
+║    HEAD OFFICE CHEQUE REVIEW SYSTEM - QUICK START            ║
+║                                                               ║
+╚═══════════════════════════════════════════════════════════════╝
+
+📋 FIRST TIME SETUP (One-time, 10 minutes):
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+1. Install Docker Desktop:
+   → Download from: https://www.docker.com/products/docker-desktop/
+   → Run installer and restart computer
+   → Launch Docker Desktop (wait for green whale icon)
+
+2. Copy this folder to your Desktop
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+🚀 DAILY USAGE:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+TO START:
+  1. Make sure Docker Desktop is running (green whale icon)
+  2. Double-click: START-HEADOFFICE.bat
+  3. Wait 60 seconds - browser opens automatically
+  4. Application ready at: http://localhost:3000
+
+TO STOP:
+  1. Double-click: STOP-HEADOFFICE.bat
+  2. Wait for confirmation message
+  3. Done!
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+❓ PROBLEMS?
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+→ See HEADOFFICE-USER-GUIDE.md for detailed troubleshooting
+
+Common fixes:
+  • "Docker not running" → Start Docker Desktop first
+  • "Port in use" → Run STOP then START again
+  • Browser not opening → Open browser, go to localhost:3000
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+📁 FILES IN THIS FOLDER:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  START-HEADOFFICE.bat         ← CLICK TO START
+  STOP-HEADOFFICE.bat          ← CLICK TO STOP
+  QUICK-START.txt              ← This file
+  HEADOFFICE-USER-GUIDE.md     ← Detailed guide
+  docker-compose.yml           ← Configuration (don't edit)
+  backend/                     ← Backend code
+  frontend-headoffice/         ← Frontend code
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+That's it! Simple as that. 🎉

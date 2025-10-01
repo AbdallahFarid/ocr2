@@ -26,6 +26,7 @@ from app.api.review import router as review_router
 from app.api.metrics import router as metrics_router
 from app.db.session import db_enabled, session_scope
 from app.api import batches as batches_router_module
+from app.services.pipeline_run import _get_engine as _pipeline_get_engine
 
 app = FastAPI(title="OCR2 Backend", version="0.1.0")
 
@@ -131,6 +132,22 @@ def _upload_root() -> str:
 
 os.makedirs(_upload_root(), exist_ok=True)
 app.mount("/files", StaticFiles(directory=_upload_root()), name="files")
+
+@app.on_event("startup")
+def _startup_prewarm() -> None:
+    if os.getenv("PREWARM_OCR", "1") != "1":
+        return
+    try:
+        import threading
+        def _warm():
+            try:
+                _pipeline_get_engine()
+                print(json.dumps({"level": "info", "msg": "prewarm_ocr_done"}))
+            except Exception as e:
+                print(json.dumps({"level": "warning", "msg": "prewarm_ocr_failed", "error": str(e)}))
+        threading.Thread(target=_warm, name="ocr-prewarm", daemon=True).start()
+    except Exception as e:
+        print(json.dumps({"level": "warning", "msg": "prewarm_ocr_setup_failed", "error": str(e)}))
 
 
 @app.get("/health")

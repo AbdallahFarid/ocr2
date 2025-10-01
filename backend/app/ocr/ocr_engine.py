@@ -62,6 +62,8 @@ from dataclasses import dataclass
 from typing import List, Tuple, Optional, Sequence, Dict, Any
 
 import numpy as np
+import os
+import cv2
 
 try:
     # PaddleOCR is an optional dependency; import lazily to avoid
@@ -154,57 +156,97 @@ class PaddleOCREngine:
         """
         if lang == "en":
             if self._ocr_en is None:
-                # Prefer PP-OCRv5 pipeline (mobile variants on CPU) and disable optional submodules per docs
-                # Fallback gradually for older PaddleOCR versions
+                # Environment-driven fast defaults for CPU
+                threads = int(os.getenv("OCR_THREADS", "8"))
+                mkldnn = os.getenv("OCR_MKLDNN", "1") == "1"
+                ocr_ver_en = os.getenv("OCR_VERSION_EN") or os.getenv("OCR_VERSION") or "PP-OCRv3"
                 try:
+                    rec_batch = int(os.getenv("OCR_REC_BATCH", "8"))
+                except Exception:
+                    rec_batch = 8
+                try:
+                    det_box_thresh = float(os.getenv("OCR_DET_BOX_THRESH", "-1"))
+                except Exception:
+                    det_box_thresh = -1.0
+                try:
+                    # Prefer explicit OCR version and disable angle/doc modules; avoid textline arg to prevent conflicts
                     self._ocr_en = PaddleOCR(
-                        # Pipeline version and model choices
-                        ocr_version="PP-OCRv5",
-                        text_detection_model_name="PP-OCRv5_server_det",
-                        text_recognition_model_name="PP-OCRv5_server_rec",
-                        # Disable optional modules for stability/perf
+                        ocr_version=ocr_ver_en,
+                        lang="en",
+                        use_angle_cls=False,
+                        enable_mkldnn=mkldnn,
+                        cpu_threads=threads,
+                        show_log=False,
+                        # The following kwargs may not exist on some versions; handled by except
                         use_doc_orientation_classify=False,
                         use_doc_unwarping=False,
-                        use_textline_orientation=False,
-                        # Language and runtime params
-                        lang="en",
-                        enable_mkldnn=True,
-                        cpu_threads=8,
-                        show_log=False,
+                        rec_batch_num=rec_batch,
+                        **({"det_db_box_thresh": det_box_thresh} if det_box_thresh >= 0 else {}),
                     )
-                except Exception:
+                except (TypeError, ValueError):
+                    # Retry without optional doc/orientation kwargs (older PaddleOCR)
                     try:
-                        # Older PaddleOCR may not accept v5 names; fall back to lang-only with orientation flag
-                        self._ocr_en = PaddleOCR(lang="en", use_textline_orientation=not self.use_angle_cls)
+                        self._ocr_en = PaddleOCR(
+                            ocr_version=ocr_ver_en,
+                            lang="en",
+                            use_angle_cls=False,
+                            enable_mkldnn=mkldnn,
+                            cpu_threads=threads,
+                            show_log=False,
+                            rec_batch_num=rec_batch,
+                        )
                     except Exception:
-                        self._ocr_en = PaddleOCR(lang="en", use_angle_cls=self.use_angle_cls)
+                        # Final fallback: language only, avoid enabling textline orientation
+                        try:
+                            self._ocr_en = PaddleOCR(lang="en", use_angle_cls=False, show_log=False, rec_batch_num=rec_batch)
+                        except Exception:
+                            self._ocr_en = PaddleOCR(lang="en")
             return self._ocr_en
         elif lang == "ar":
             if self._ocr_ar is None:
-                # Prefer PP-OCRv5 detection with Arabic v3 recognizer; disable optional modules
+                # Environment-driven fast defaults for CPU
+                threads = int(os.getenv("OCR_THREADS", "8"))
+                mkldnn = os.getenv("OCR_MKLDNN", "1") == "1"
+                ocr_ver_ar = os.getenv("OCR_VERSION_AR") or os.getenv("OCR_VERSION") or "PP-OCRv3"
+                try:
+                    rec_batch = int(os.getenv("OCR_REC_BATCH", "8"))
+                except Exception:
+                    rec_batch = 8
+                try:
+                    det_box_thresh = float(os.getenv("OCR_DET_BOX_THRESH", "-1"))
+                except Exception:
+                    det_box_thresh = -1.0
                 try:
                     self._ocr_ar = PaddleOCR(
-                        ocr_version="PP-OCRv5",
-                        text_detection_model_name="PP-OCRv5_server_det",
-                        text_recognition_model_name="arabic_PP-OCRv3_mobile_rec",
-                        use_doc_orientation_classify=False,
-                        use_doc_unwarping=False,
-                        use_textline_orientation=False,
+                        ocr_version=ocr_ver_ar,
                         lang="ar",
-                        enable_mkldnn=True,
-                        cpu_threads=8,
+                        use_angle_cls=False,
+                        enable_mkldnn=mkldnn,
+                        cpu_threads=threads,
                         use_space_char=True,
                         show_log=False,
+                        use_doc_orientation_classify=False,
+                        use_doc_unwarping=False,
+                        rec_batch_num=rec_batch,
+                        **({"det_db_box_thresh": det_box_thresh} if det_box_thresh >= 0 else {}),
                     )
-                except Exception:
+                except (TypeError, ValueError):
                     try:
-                        # Older PaddleOCR versions may not support above params; progressively degrade
-                        self._ocr_ar = PaddleOCR(lang="ar", use_textline_orientation=not self.use_angle_cls, use_space_char=True)
+                        self._ocr_ar = PaddleOCR(
+                            ocr_version=ocr_ver_ar,
+                            lang="ar",
+                            use_angle_cls=False,
+                            enable_mkldnn=mkldnn,
+                            cpu_threads=threads,
+                            use_space_char=True,
+                            show_log=False,
+                            rec_batch_num=rec_batch,
+                        )
                     except Exception:
                         try:
-                            self._ocr_ar = PaddleOCR(lang="ar", use_textline_orientation=not self.use_angle_cls)
+                            self._ocr_ar = PaddleOCR(lang="ar", use_angle_cls=False, use_space_char=True, show_log=False, rec_batch_num=rec_batch)
                         except Exception:
-                            self._ocr_ar = PaddleOCR(lang="ar", use_angle_cls=self.use_angle_cls)
+                            self._ocr_ar = PaddleOCR(lang="ar")
             return self._ocr_ar
         else:
             raise ValueError(f"Unsupported language: {lang}")
@@ -352,6 +394,7 @@ class PaddleOCREngine:
         min_confidence: float = 0.3,
         padding: int = 5,
         n_votes: int = 3,
+        max_width: Optional[int] = None,
     ) -> List[OCRLine]:
         """Run OCR on a region of interest using multi‑crop voting.
 
@@ -393,6 +436,15 @@ class PaddleOCREngine:
             cx2 = min(w, x2 + pad)
             cy2 = min(h, y2 + pad)
             crop = image[cy1:cy2, cx1:cx2]
+            # Optional downscale for ROI to speed up detection/recog
+            try:
+                if max_width is not None and crop.shape[1] > int(max_width):
+                    scale = float(int(max_width)) / float(max(1, crop.shape[1]))
+                    new_w = max(1, int(round(crop.shape[1] * scale)))
+                    new_h = max(1, int(round(crop.shape[0] * scale)))
+                    crop = cv2.resize(crop, (new_w, new_h), interpolation=cv2.INTER_AREA)
+            except Exception:
+                pass
             lines = self.ocr_image(crop, languages=languages, min_confidence=min_confidence)
             if not lines:
                 continue
