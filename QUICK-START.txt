@@ -4,7 +4,7 @@
 ║                                                               ║
 ╚═══════════════════════════════════════════════════════════════╝
 
-📋 FIRST TIME SETUP (One-time, 10 minutes):
+FIRST TIME SETUP (One-time, 10 minutes):
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 1. Install Docker Desktop:
@@ -16,7 +16,7 @@
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-🚀 DAILY USAGE:
+DAILY USAGE:
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 TO START:
@@ -32,29 +32,3 @@ TO STOP:
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-❓ PROBLEMS?
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-→ See HEADOFFICE-USER-GUIDE.md for detailed troubleshooting
-
-Common fixes:
-  • "Docker not running" → Start Docker Desktop first
-  • "Port in use" → Run STOP then START again
-  • Browser not opening → Open browser, go to localhost:3000
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-📁 FILES IN THIS FOLDER:
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-  START-HEADOFFICE.bat         ← CLICK TO START
-  STOP-HEADOFFICE.bat          ← CLICK TO STOP
-  QUICK-START.txt              ← This file
-  HEADOFFICE-USER-GUIDE.md     ← Detailed guide
-  docker-compose.yml           ← Configuration (don't edit)
-  backend/                     ← Backend code
-  frontend-headoffice/         ← Frontend code
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-That's it! Simple as that. 🎉
