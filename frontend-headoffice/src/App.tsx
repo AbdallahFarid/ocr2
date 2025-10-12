@@ -4,6 +4,7 @@ import FileUploader from './components/FileUploader'
 import ProcessButton from './components/ProcessButton'
 import DownloadSection from './components/DownloadSection'
 import ProgressIndicator from './components/ProgressIndicator'
+import BacklogTable from './components/BacklogTable'
 import {
   type Bank,
   uploadCheque,
@@ -17,8 +18,10 @@ import { getErrorMessage, retryWithBackoff } from './utils/errorMessages'
 import { colors, typography, spacing, borderRadius, shadows } from './styles/tokens'
 
 type Stage = 'upload' | 'uploading' | 'processing' | 'complete'
+type View = 'upload' | 'backlog'
 
 function App() {
+  const [view, setView] = useState<View>('upload')
   const [stage, setStage] = useState<Stage>('upload')
   const [selectedBank, setSelectedBank] = useState<Bank | null>(null)
   const [files, setFiles] = useState<File[]>([])
@@ -144,6 +147,7 @@ function App() {
     setBatchId('')
     setUploadedItems([])
     setError(null)
+    setView('upload')
   }
 
   const canProcess = selectedBank !== null && files.length > 0 && !processing
@@ -161,9 +165,10 @@ function App() {
     }}>
       <div style={{
         width: '100%',
-        maxWidth: '600px',
+        maxWidth: view === 'backlog' ? '1200px' : '600px',
         padding: spacing.xl,
         fontFamily: typography.fontFamily,
+        transition: 'max-width 0.3s ease',
       }}>
         <div style={{
           textAlign: 'center',
@@ -190,6 +195,49 @@ function App() {
             Upload cheques and download Excel for verification
           </p>
         </div>
+
+        {/* View Toggle */}
+        {stage === 'upload' && (
+          <div style={{
+            display: 'flex',
+            justifyContent: 'center',
+            gap: spacing.md,
+            marginBottom: spacing.xl,
+          }}>
+            <button
+              onClick={() => setView('upload')}
+              style={{
+                padding: `${spacing.md} ${spacing.xl}`,
+                fontSize: typography.fontSize.base,
+                fontWeight: typography.fontWeight.semibold,
+                color: view === 'upload' ? colors.bgPrimary : colors.textSecondary,
+                backgroundColor: view === 'upload' ? colors.primary : colors.bgPrimary,
+                border: `2px solid ${view === 'upload' ? colors.primary : colors.gray200}`,
+                borderRadius: borderRadius.lg,
+                cursor: 'pointer',
+                transition: 'all 0.2s',
+              }}
+            >
+              New Upload
+            </button>
+            <button
+              onClick={() => setView('backlog')}
+              style={{
+                padding: `${spacing.md} ${spacing.xl}`,
+                fontSize: typography.fontSize.base,
+                fontWeight: typography.fontWeight.semibold,
+                color: view === 'backlog' ? colors.bgPrimary : colors.textSecondary,
+                backgroundColor: view === 'backlog' ? colors.primary : colors.bgPrimary,
+                border: `2px solid ${view === 'backlog' ? colors.primary : colors.gray200}`,
+                borderRadius: borderRadius.lg,
+                cursor: 'pointer',
+                transition: 'all 0.2s',
+              }}
+            >
+              Recent Batches
+            </button>
+          </div>
+        )}
 
         {error && (
           <div style={{
@@ -246,7 +294,13 @@ function App() {
           </div>
         )}
 
-        {stage === 'upload' && (
+        {/* Backlog View */}
+        {stage === 'upload' && view === 'backlog' && (
+          <BacklogTable />
+        )}
+
+        {/* Upload View */}
+        {stage === 'upload' && view === 'upload' && (
           <div style={{ display: 'flex', flexDirection: 'column', gap: spacing.xl }}>
             <BankSelector
               selected={selectedBank}

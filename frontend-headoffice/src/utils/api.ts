@@ -32,6 +32,20 @@ export type FinalizeResponse = {
   metrics?: Record<string, unknown>
 }
 
+export type BatchItem = {
+  bank: string
+  name: string
+  batch_date: string
+  seq: number
+  status: string
+  total_cheques: number
+  accuracy_rate: number | null
+  error_rate_cheques: number | null
+  error_rate_fields: number | null
+  flagged: boolean
+  created_at: string
+}
+
 /**
  * Upload a single cheque image
  */
@@ -140,4 +154,19 @@ export function downloadBlob(blob: Blob, filename: string) {
   a.click()
   document.body.removeChild(a)
   URL.revokeObjectURL(url)
+}
+
+/**
+ * Fetch recent batches (last 5 by default)
+ */
+export async function getRecentBatches(limit: number = 5): Promise<BatchItem[]> {
+  const res = await fetch(`${backendBase}/batches/recent?limit=${limit}`, {
+    method: 'GET',
+  })
+
+  if (!res.ok) {
+    throw new Error(`Failed to fetch recent batches: ${res.status} ${res.statusText}`)
+  }
+
+  return res.json()
 }

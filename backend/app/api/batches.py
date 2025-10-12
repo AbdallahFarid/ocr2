@@ -74,6 +74,44 @@ async def list_batches(
         return out
 
 
+@router.get("/recent")
+async def get_recent_batches(
+    limit: int = Query(5, description="Number of recent batches to return", ge=1, le=50)
+) -> List[Dict[str, Any]]:
+    """Get the most recent batches across all banks, ordered by creation date."""
+    if not db_enabled():
+        raise HTTPException(status_code=503, detail="DB not enabled")
+    
+    with session_scope() as db:
+        q = (
+            select(Batch)
+            .order_by(Batch.created_at.desc())
+            .limit(limit)
+        )
+        rows = db.execute(q).scalars().all()
+        out: List[Dict[str, Any]] = []
+        for b in rows:
+            # Calculate accuracy rate (100% - error_rate_fields)
+            accuracy_rate = None
+            if b.error_rate_fields is not None:
+                accuracy_rate = round((1.0 - float(b.error_rate_fields)) * 100, 2)
+            
+            out.append({
+                "bank": b.bank_code,
+                "name": b.name,
+                "batch_date": b.batch_date.isoformat(),
+                "seq": b.seq,
+                "status": b.status,
+                "total_cheques": b.total_cheques,
+                "accuracy_rate": accuracy_rate,
+                "error_rate_cheques": float(b.error_rate_cheques) if b.error_rate_cheques is not None else None,
+                "error_rate_fields": float(b.error_rate_fields) if b.error_rate_fields is not None else None,
+                "flagged": bool(b.flagged),
+                "created_at": b.created_at.isoformat() if b.created_at else None,
+            })
+        return out
+
+
 @router.get("/{bank}/{batch_name}")
 async def get_batch_detail(bank: str, batch_name: str) -> Dict[str, Any]:
     if not db_enabled():
